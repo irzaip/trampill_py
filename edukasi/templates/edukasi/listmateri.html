@@ -1,0 +1,30 @@
+{% extends 'edukasi/main.html' %}
+
+
+{% block content %}
+
+
+ <div class="album py-5 bg-light">
+   <div class="container">
+      <div class="row-md-3 justify-content-center"><h1 class="text-center">Terbaru</h1></div>
+      <div class="row">
+        {% for i in materis %}
+        
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-header">
+            {{ i.kategori }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ i.judul }}</h5>
+            <p class="card-text">{{ i.deskripsi }}</p>
+            <a href="{% url 'materi' i.id %}" class="btn btn-primary">Lihat</a>
+          </div>
+        </div>
+
+        {% endfor %} 
+      </div>
+   </div>
+ </div>
+
+      
+{% endblock %}
