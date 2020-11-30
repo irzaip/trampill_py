@@ -66,4 +66,17 @@ class Notifikasi(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     isi = models.TextField(null=True,)
     read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.user) + " - "  + str(self.isi)
     
+class Pengumuman(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    judul = models.CharField(max_length=100,null=True)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    isi = models.TextField()
+    display = models.BooleanField(default=False)
+    frontpage = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.date)

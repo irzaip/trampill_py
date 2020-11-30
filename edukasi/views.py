@@ -5,8 +5,28 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
+from rest_framework import permissions
+from edukasi.serializers import UserSerializer, GroupSerializer
 
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 from .models import *
 from .forms import *
@@ -79,7 +99,12 @@ def listmateri(request):
 def materi(request, sid):
     materi = Materi.objects.get(id=sid)
     starttopic = Topic.objects.filter(materi=materi.id).first().id
-    tags = materi.tags.all()
+
+    try:
+        tags = ", ".join([i[1] for i in materi.tags.values_list()])
+    except:
+        tags = ""
+
     context = {'materi': materi, 'starttopic': starttopic, 'tags': tags}
     return render(request, 'edukasi/materi.html', context)
 
@@ -94,3 +119,15 @@ def topic(request, sid):
     topics = Topic.objects.filter(materi=materi.id)
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content}
     return render(request, 'edukasi/topic.html', context)
+
+def kontribusi(request):
+    context = {}
+    return render(request, 'edukasi/kontribusi.html', context)
+
+def faq(request):
+    context = {}
+    return render(request, 'edukasi/faq.html',context)
+    
+def feature(request):
+    context = {}
+    return render(request, 'edukasi/feature.html',context)
