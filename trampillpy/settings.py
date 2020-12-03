@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'vypic2_mg4@#os$szv0d#kcjfjaaouvllyn!3@=qmhki^#7ux^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['neo.trampill.com', ]
 
 
 # Application definition
