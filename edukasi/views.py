@@ -114,10 +114,32 @@ def edittopic(request):
     return render(request, 'edukasi/edittopic.html', context)
 
 def topic(request, sid):
+    try:
+        sid = int(sid)
+    except:
+        sid = 0
     topic_content = Topic.objects.get(id=sid)
     materi = Materi.objects.get(id=topic_content.materi.id)
-    topics = Topic.objects.filter(materi=materi.id)
-    context = {'materi': materi, 'topics': topics, 'topic_content': topic_content}
+    topics = Topic.objects.filter(materi=materi.id).order_by("no_urut")
+
+    #HITUNG TOPIC SEBELUM DAN SESUDAH
+    sequence_topics = [i.id for i in topics]
+    sidindex = sequence_topics.index(sid)
+    if sidindex == 0 and len(sequence_topics) == 1:
+        next = 0
+        prev = 0
+    elif sidindex == 0 and len(sequence_topics) > 0:
+        next = sequence_topics[1]
+        prev = 0
+    elif sidindex == len(sequence_topics) - 1:
+        next = 0
+        prev = sequence_topics[sidindex-1]
+    else:
+        next = sequence_topics[sidindex+1]
+        prev = sequence_topics[sidindex-1]
+
+    context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
+        'next': next, 'prev': prev}
     return render(request, 'edukasi/topic.html', context)
 
 def kontribusi(request):
