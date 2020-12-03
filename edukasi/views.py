@@ -32,7 +32,7 @@ from .models import *
 from .forms import *
 from .filter import *
 from .decorators import *
-
+from .mylib import *
 
 # Create your views here.
 def registerPage(request):
@@ -138,8 +138,13 @@ def topic(request, sid):
         next = sequence_topics[sidindex+1]
         prev = sequence_topics[sidindex-1]
 
+    if topic_content.jenis == 'Link Video':
+        ytb_video = get_yt_v(topic_content.link)
+    else:
+        ytb_video = ""
+
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
-        'next': next, 'prev': prev}
+        'next': next, 'prev': prev, 'ytb_video': ytb_video}
     return render(request, 'edukasi/topic.html', context)
 
 def kontribusi(request):

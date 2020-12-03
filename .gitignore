@@ -132,3 +132,5 @@ dmypy.json
 tmp/
 tmp/*
 tmp
+
+trampillpy/settings.py

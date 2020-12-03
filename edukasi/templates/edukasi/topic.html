@@ -11,8 +11,8 @@
                     <h4>{{ topic_content.judul}}</h4>
 
                     {% if topic_content.jenis == 'Link Video' %}
-                    <div class="row" style="margin: 20px;">
-                        <iframe width="100%" height="550" src="https://www.youtube.com/embed/OroneBGTIUw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                        <iframe width="100%" height="550" src="https://www.youtube.com/embed/{{ ytb_video }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                     {% endif %}
 
