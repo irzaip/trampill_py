@@ -20,3 +20,55 @@ class CreateUserForm(UserCreationForm):
         help_texts = {'first_name': "Jangan gitu yaa", 'password1': ""}
 
 
+class ExampleForm(forms.Form):
+    favorite_food = forms.CharField(
+        label = "What is your favorite food?",
+        max_length = 80,
+        required = True,
+    )
+
+    favorite_color = forms.CharField(
+        label = "What is your favorite color?",
+        max_length = 80,
+        required = True,
+    )
+
+    favorite_number = forms.IntegerField(
+        label = "Favorite number",
+        required = False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-exampleForm'
+        self.helper.form_class = 'blueForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'submit_survey'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class TopicForm(ModelForm):
+    class Meta:
+        model = Topic
+        fields = '__all__'
+
+class MateriForm(ModelForm):
+    class Meta:
+        model = Materi
+        fields = '__all__'
+        help_texts = {
+            'judul': 'Tulis judul yang anda inginkan disini.'
+        }
+
+class UjianForm(ModelForm):
+    class Meta:
+        model = Ujian
+        fields = '__all__'
+
+
+class SoalForm(ModelForm):
+    class Meta:
+        model = Soal
+        fields = '__all__'

@@ -1,0 +1,42 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+<div class="container-md" style="margin-top: 20px;">
+    <h2>List Ujian</h2>
+    <a class= "btn btn-primary" href="{% url 'addujian' %}">Tambah Ujian / Tugas</a>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Judul</th>
+            <th>Kode</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in listujian %}
+        <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.judul }}</td>
+            <td>{{ i.kode }}</td>
+            <td><a class="btn btn-info" href="{% url 'editujian' i.id %}">Edit</a></td>
+            <td><a class="btn btn-danger" href="{% url 'deleteujian' i.id %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+
+</div>
+
+      
+{% endblock %}

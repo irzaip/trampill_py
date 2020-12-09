@@ -1,0 +1,36 @@
+{% extends 'edukasi/main.html' %}
+
+
+{% block content %}
+
+   <div class="container" style="margin-top: 20px;">
+      <h2 style="margin-top: 20px;">Inbox</h2>
+    <div class="row-flex">
+        {% for i in inbox %}
+        <div class="row-flex">
+        <div class="card border-secondary">
+            <div class="card-header">from: {{ i.sender }} date: {{ i.created_at }}</div>
+            <div class="card-body text-secondary">
+               <p class="card-text">{{ i.msg_content }}</p>
+            </div>
+         </div>
+         </div>
+        {% endfor %}
+    </div>
+      <h2 style="margin-top: 20px;">SentBox</h2>
+    <div class="row-flex">
+      {% for i in sentbox %}
+      <div class="row-flex">
+      <div class="card border-secondary">
+          <div class="card-header">To: {{ i.receiver }} date: {{ i.created_at }}</div>
+          <div class="card-body text-secondary">
+             <p class="card-text">{{ i.msg_content }}</p>
+          </div>
+       </div>
+       </div>
+      {% endfor %}
+    </div>
+   </div>
+
+      
+{% endblock %}

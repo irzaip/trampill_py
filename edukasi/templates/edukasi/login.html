@@ -1,11 +1,10 @@
 {% extends 'edukasi/main.html' %}
 {% block content %}
-    <div class="container" style="margin-top: 20px">
+    <div class="container-md" style="margin-top: 20px">
       <div class="row justify-content-md-center">
-        <div class="col-1"></div>
-        <div class="col-4 border" style="padding: 30px">
-          <form class='form-group row' action="" method="post">
-            <div class="form-group">
+        <div class="col col-lg-1"></div>
+        <div class="col-md-5 border" style="padding: 30px">
+          <form class='form-group col' action="" method="post">
                 <h1>
                   Login
                 </h1>
@@ -18,13 +17,13 @@
                 {% for message in messages %}
                 <div class="alert alert-info">{{message}}</div>
                 {% endfor %}
+                <hr>
                 <button type="submit" class="btn btn-success">Login</button>
 
-            </div>
           </form>
           <p>Apabila anda belum terdaftar? <a href="{% url 'register' %}">KLIK di SINI</a></p>
         </div>
-        <div class="col-1"></div>
+        <div class="col col-lg-1"></div>
       </div>
     </div>
 {% endblock %}

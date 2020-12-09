@@ -6,7 +6,7 @@
 
  <div class="album py-5 bg-light">
    <div class="container">
-      <div class="row-md-3 justify-content-center"><h1 class="text-center">Terbaru</h1></div>
+      <div class="row-md-3 justify-content-center"><h1 class="text-center">Daftar Materi</h1></div>
       <div class="row">
         {% for i in materis %}
         
@@ -18,6 +18,9 @@
             <h5 class="card-title">{{ i.judul }}</h5>
             <p class="card-text">{{ i.deskripsi }}</p>
             <a href="{% url 'materi' i.id %}" class="btn btn-primary">Lihat</a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'edit_materi' i.id %}" class="btn btn-warning">EDIT</a>
+            {% endif %}
           </div>
         </div>
 

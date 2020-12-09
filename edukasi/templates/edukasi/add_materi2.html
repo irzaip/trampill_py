@@ -1,0 +1,64 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<div class="container-md" style="margin-top: 20px;">
+    <div class="col-md-6">
+        <form action="" method="post">
+        <table>
+            {{ materi.as_table }}
+        </table>
+        </form>
+    </div>
+
+    <table class="table-sm table-condensed table-striped table-bordered" style="font-size: .9em;">
+        <thead>
+                <tr>
+                    <th scope="col">No urut</th>
+                    <th scope="col">Judul</th>
+                    <th scope="col">Jenis</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Isi</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+        </thead>
+        <tbody>
+            {% for i in m_topic %}
+                <tr>
+                    <td><p>{{ i.no_urut }}</p></td>
+                    <td><p>{{ i.judul }}</p></td>
+                    <td><p>{{ i.jenis }}</p></td>
+                    <td><p>{{ i.link }}</p></td>
+                    <td><p>{{ i.isi }}</p></td>
+                    <td><a href="/edittopic/{{ i.id}}" class="btn btn-sm btn-primary">Edit</a></td>
+                    <td><a href="/deltopic/{{i.id}}" class="btn btn-sm btn-danger">X</a></td>
+                </tr>
+                
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Tambahkan Topic</h2>
+    <div class="row justified-content-md-center" style="margin-top: 20px;">
+    <div class="col col-lg-1"></div>
+    <div class="col-md-6">
+        <form action="" method="post">
+            {% csrf_token %} 
+        <table>
+            {{ form.as_table }}
+        </table>
+
+        <button type="submit" class="btn btn-primary">SUBMIT</button>
+        </form>
+    </div>
+    <div class="col col-lg-1"></div>
+    </div>
+</div>
+
+      
+{% endblock %}

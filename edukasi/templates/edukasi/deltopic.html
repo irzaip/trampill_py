@@ -1,12 +1,12 @@
 {% extends 'edukasi/main.html' %}
-{% load crispy_forms_tags %}
-
 
 {% block content %}
 
-
 <div class="container-md" style="margin-top: 20px;">
-    <h2>Edit Topic</h2>
+
+    <h3>Yakin hapus topic ini?</h3>
+    <div class="row justified-content-md-center" style="margin-top: 20px;">
+    <div class="col col-lg-1"></div>
     <div class="col-md-6">
         <form action="" method="post">
             {% csrf_token %} 
@@ -14,10 +14,11 @@
             {{ topic.as_table }}
         </table>
 
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn btn-danger">HAPUS</button>
         </form>
     </div>
-
+    <div class="col col-lg-1"></div>
+    </div>
 </div>
 
       

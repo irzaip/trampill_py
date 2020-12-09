@@ -6,15 +6,15 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
-    <h2>Edit Topic</h2>
+    <a class='btn btn-warning float-right' href='/add_materi_topic/{{ materi_id }}/'>Edit topic Pelajaran</a>
     <div class="col-md-6">
         <form action="" method="post">
             {% csrf_token %} 
         <table>
-            {{ topic.as_table }}
+            {{ materi.as_table }}
         </table>
-
-        <button type="submit">Submit</button>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 

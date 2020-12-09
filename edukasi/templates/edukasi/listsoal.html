@@ -1,0 +1,46 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+<div class="container-md" style="margin-top: 20px;">
+    <h2>List Soal</h2>
+    <a class= "btn btn-primary" href="{% url 'addsoal' %}">Tambah Soal</a>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Ujian</th>
+            <th>no_urut</th>
+            <th>Judul</th>
+            <th>Pertanyaan</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in listsoal %}
+        <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.ujian.judul }}</td>
+            <td>{{ i.no_urut }}</td>
+            <td>{{ i.judul }}</td>
+            <td>{{ i.pertanyaan }}</td>
+            <td><a class="btn btn-info" href="{% url 'editsoal' i.id %}">Edit</a></td>
+            <td><a class="btn btn-danger" href="{% url 'deletesoal' i.id %}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+
+</div>
+
+      
+{% endblock %}

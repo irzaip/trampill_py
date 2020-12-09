@@ -48,7 +48,7 @@
                             {% if i.id == sid %}
                                 <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
                             {% else %}
-                                <a class="nav-link" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                                <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
                             {% endif %}
                         </li>
                     {% endfor %}

@@ -32,10 +32,19 @@ class Materi(models.Model):
     judul = models.CharField(max_length=200)
     kode = models.CharField(max_length=20, null=True)
     deskripsi = models.TextField(null=True, blank=True)
-    gambar = models.ImageField()
+    gambar = models.ImageField(null=True, blank=True)
     kategori = models.CharField(max_length=100, choices=KATEGORI)
     tags = models.ManyToManyField(Tag)
     summary = models.TextField()
+
+    def __str__(self):
+        return self.judul
+
+class Ujian(models.Model):
+    judul = models.CharField(max_length=25)
+    kode = models.CharField(max_length=10, null=True, blank=True)
+    deskripsi = models.TextField()
+    nilai_max = models.IntegerField(default=100)
 
     def __str__(self):
         return self.judul
@@ -58,17 +67,11 @@ class Topic(models.Model):
     jenis = models.CharField(max_length=20, choices=JENIS)
     link = models.CharField(max_length=250, null=True, blank=True)
     isi_tambahan = models.TextField(null=True, blank=True)
+    tugas = models.ForeignKey(Ujian, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.id) + str("-") + str(self.materi) + str("-") + str(self.no_urut) + str("-") + str(self.judul)
 
-class Notifikasi(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    isi = models.TextField(null=True,)
-    read = models.BooleanField(default=False)
-
-    def __str__(self):
-        return str(self.user) + " - "  + str(self.isi)
     
 class Pengumuman(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -80,3 +83,50 @@ class Pengumuman(models.Model):
 
     def __str__(self):
         return str(self.date)
+
+class Message(models.Model):
+     sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
+     reciever = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
+     msg_content = models.TextField()
+     readed = models.BooleanField(default=False)
+     created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+
+
+class TagSoal(models.Model):
+    name = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return self.name
+
+class Soal(models.Model):
+    TIPE = (
+        ('Pilihan Ganda', 'Pilihan Ganda'),
+        ('Betul / Salah', 'Betul / Salah'),
+        ('Mencocokkan', 'Mencocokkan'),
+        ('Jawab singkat', 'Jawab singkat'),
+        ('Numerik', 'Numerik'),
+        ('Essay', 'Essay'),
+        ('Kumpul URL', 'Kumpul URL'),
+        ('Lain-lain', 'Lain-lain'),
+    )
+    ujian = models.ForeignKey(Ujian, on_delete=models.CASCADE )
+    no_urut = models.IntegerField()
+    tipe = models.CharField(max_length=20, choices=TIPE)
+    judul = models.CharField(max_length=25)
+    pertanyaan = models.TextField()
+    penjelasan = models.TextField()
+    benarsalah = models.BooleanField(null=True, blank=True)
+    multianswer = models.BooleanField(null=True, blank=True, default=False)
+    tags = models.ManyToManyField(TagSoal, null=True, blank=True)
+
+    def __str__(self):
+        return self.judul
+
+class Komplit(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + "-" + self.topic.judul
+

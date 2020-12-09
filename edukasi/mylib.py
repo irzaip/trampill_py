@@ -1,8 +1,6 @@
 
 # my private library
-
 import urllib.parse as urlparse
-
 
 def get_yt_v(url):
     url_data = urlparse.urlparse(url)

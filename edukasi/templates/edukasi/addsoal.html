@@ -6,12 +6,12 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
-    <h2>Edit Topic</h2>
+    <h2>Tambah Soal</h2>
     <div class="col-md-6">
         <form action="" method="post">
             {% csrf_token %} 
         <table>
-            {{ topic.as_table }}
+            {{ soal.as_table }}
         </table>
 
         <button type="submit">Submit</button>

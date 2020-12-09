@@ -6,15 +6,15 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
-    <h2>Edit Topic</h2>
+    <h2>HAPUS Ujian</h2>
     <div class="col-md-6">
         <form action="" method="post">
             {% csrf_token %} 
         <table>
-            {{ topic.as_table }}
+            {{ ujianform.as_table }}
         </table>
 
-        <button type="submit">Submit</button>
+        <button class="btn btn-danger" type="submit">HAPUS</button>
         </form>
     </div>
 
