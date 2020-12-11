@@ -524,7 +524,7 @@ def deletediskusi(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/deletediskusi.html', context)
 
-
+@login_required(login_url='login')
 def daftarmateri(request, sid):
     navmenu = get_user_menu(request)
 
@@ -546,7 +546,7 @@ def daftarmateri(request, sid):
 
     return render(request, 'edukasi/daftarmateri.html', context)
 
-
+@login_required(login_url='login')
 def favorit(request, sid):
     user = User.objects.get(username=request.user)
     materi = Materi.objects.get(id=sid)
