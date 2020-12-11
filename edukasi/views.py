@@ -22,6 +22,12 @@ from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
 
 
+def get_user_menu(request):
+    pendaftaran = Pendaftaran.objects.filter(user=request.user)
+    favorit = Favorit.objects.filter(user=request.user)
+    navmenu = {'pendaftaran': pendaftaran, 'favorit': favorit}
+    return navmenu
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -131,17 +137,23 @@ def logoutPage(request):
 
 
 def homePage(request):
+    navmenu = get_user_menu(request)
+
     materis = Materi.objects.all()
     context = {'materis': materis}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/home.html', context)
 
 @login_required(login_url='login')
 def listmateri(request):
+    navmenu = get_user_menu(request)
     materis = Materi.objects.all()
     context = {'materis': materis}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
 
 def materi(request, sid):
+    navmenu = get_user_menu(request)
     materi = Materi.objects.get(id=sid)
     starttopic = Topic.objects.filter(materi=materi.id).first().id
 
@@ -151,14 +163,19 @@ def materi(request, sid):
         tags = ""
 
     context = {'materi': materi, 'starttopic': starttopic, 'tags': tags}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/materi.html', context)
 
-@login_required(login_url='login')
+@user_passes_test(lambda u: u.is_superuser)
 def edittopic(request):
+    navmenu = get_user_menu(request)
     context = {}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/edittopic.html', context)
 
+@login_required(login_url='login')
 def topic(request, sid):
+    navmenu = get_user_menu(request)
     try:
         sid = int(sid)
     except:
@@ -200,36 +217,67 @@ def topic(request, sid):
         addkomplit = Komplit(topic=tsid, user=request.user)
         addkomplit.save()
 
+    diskusi = Diskusi.objects.filter(topic=sid)
+    diskusiForm = DiskusiForm()
+    if request.method == "POST":
+
+        data = {'user': request.user,
+                'topic': sid,
+                'pesan': request.POST.get('pesan')
+                }
+        diskusi = DiskusiForm(data)
+
+        if diskusi.is_valid():
+            diskusi.save()
+            return redirect('topic', sid)
     
+    else:
+        diskusiForm=DiskusiForm()
+    
+
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
-        'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed}
+        'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
+        'diskusiForm': diskusiForm
+        }
+    context = {**context, **navmenu}
     return render(request, 'edukasi/topic.html', context)
 
 def kontribusi(request):
+    navmenu = get_user_menu(request)
     context = {}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/kontribusi.html', context)
 
 def faq(request):
+    navmenu = get_user_menu(request)
     context = {}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/faq.html',context)
     
 def feature(request):
+    navmenu = get_user_menu(request)
     context = {}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/feature.html',context)
 
 def please_verify(request):
+    navmenu = get_user_menu(request)
     context = {}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/please_verify.html', context)
 
 def messages(request):
+    navmenu = get_user_menu(request)
     inbox = Message.objects.filter(reciever=request.user)
     sentbox = Message.objects.filter(sender=request.user)
 
     context = {'inbox': inbox, 'sentbox': sentbox}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/messages.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_materi(request):
+    navmenu = get_user_menu(request)
     materi = MateriForm()
     if request.method == "POST":
         materi = MateriForm(request.POST)
@@ -238,10 +286,12 @@ def add_materi(request):
             return redirect('add_materi_topic', mt.id)
 
     context = {'materi': materi}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_materi_topic(request, sid):
+    navmenu = get_user_menu(request)
     m_topic = Topic.objects.filter(materi=sid).order_by('no_urut')
     form = TopicForm(initial={'materi': sid})
     
@@ -255,59 +305,73 @@ def add_materi_topic(request, sid):
 
 
     context = {'form': form, 'm_topic': m_topic}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi2.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def edit_materi(request,sid):
+    navmenu = get_user_menu(request)
     instance = Materi.objects.get(id=sid)
     materi = MateriForm(instance=instance)
     materi_id = sid
-    context = {'materi': materi, 'materi_id': materi_id}
+
     if request.method == "POST":
         materi = MateriForm(request.POST, instance=instance)
         if materi.is_valid():
             tt = materi.save()
             return redirect('materi', materi_id)
 
+    context = {'materi': materi, 'materi_id': materi_id}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def edittopic(request,sid):
+    navmenu = get_user_menu(request)
     instance = Topic.objects.get(id=sid)
     topic = TopicForm(instance=instance)
-    context = {'topic': topic}
+
     if request.method == "POST":
         topic = TopicForm(request.POST, instance=instance)
         if topic.is_valid():
             tt = topic.save()
             return redirect('add_materi_topic', tt.materi.id)
 
+    context = {'topic': topic}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/edittopic.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def deltopic(request, sid):
+    navmenu = get_user_menu(request)
     instance = Topic.objects.get(id=sid)
     materi_id = instance.materi.id
     topic = TopicForm(instance=instance)
-    context = {'topic': topic}
 
     if request.method == "POST":
         topic = TopicForm(request.POST, instance=instance)
         if topic.is_valid():
             tt = instance.delete()
             return redirect('add_materi_topic', materi_id)
+
+    context = {'topic': topic}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/deltopic.html', context)
 
 
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def listujian(request):
+    navmenu = get_user_menu(request)
     listujian = Ujian.objects.all()
     
     context = {'listujian': listujian}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/listujian.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def addujian(request):
+    navmenu = get_user_menu(request)
     ujian = UjianForm()
 
     if request.method=="POST":
@@ -317,9 +381,12 @@ def addujian(request):
             return redirect('listujian')
 
     context = {'ujian': ujian}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/addujian.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def editujian(request,sid):
+    navmenu = get_user_menu(request)
     instance = Ujian.objects.get(id=sid)
     ujianform = UjianForm(instance=instance)
     if request.method == "POST":
@@ -328,9 +395,12 @@ def editujian(request,sid):
             ujianform.save()
 
     context = {'ujianform': ujianform}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/editujian.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def deleteujian(request, sid):
+    navmenu = get_user_menu(request)
     instance = Ujian.objects.get(id=sid)
     ujianform = UjianForm(instance=instance)
     if request.method=="POST":
@@ -339,15 +409,21 @@ def deleteujian(request, sid):
         return redirect('listujian')
 
     context = {'ujianform': ujianform}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/deleteujian.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def listsoal(request):
+    navmenu = get_user_menu(request)
     listsoal = Soal.objects.all()
     
     context = {'listsoal': listsoal}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/listsoal.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def addsoal(request):
+    navmenu = get_user_menu(request)
     soal = SoalForm()
     
     if request.method=="POST":
@@ -357,20 +433,27 @@ def addsoal(request):
             return redirect('listsoal')
 
     context = {'soal': soal}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/addsoal.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def editsoal(request,sid):
+    navmenu = get_user_menu(request)
     instance = Soal.objects.get(id=sid)
     soalform = SoalForm(instance=instance)
+
     if request.method == "POST":
         soalform = SoalForm(request.POST,instance=instance)
         if soalform.is_valid():
             soalform.save()
 
     context = {'soalform': soalform}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/editsoal.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def deletesoal(request, sid):
+    navmenu = get_user_menu(request)
     instance = Soal.objects.get(id=sid)
     soalform = SoalForm(instance=instance)
     if request.method=="POST":
@@ -379,4 +462,51 @@ def deletesoal(request, sid):
         return redirect('listsoal')
 
     context = {'soalform': soalform}
+    context = {**context, **navmenu}
     return render(request, 'edukasi/deletesoal.html', context)
+
+def materisaya(request):
+    navmenu = get_user_menu(request)
+    context = {}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/materisaya.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def listdiskusi(request):
+    navmenu = get_user_menu(request)
+    listdiskusi = Diskusi.objects.all()
+    context = {'listdiskusi': listdiskusi}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/listdiskusi.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def editdiskusi(request, sid):
+    navmenu = get_user_menu(request)
+    instance = Diskusi.objects.get(id=sid)
+    diskusiForm = DiskusiForm(instance=instance)
+
+    if request.method == "POST":
+        diskusiForm = DiskusiForm(request.POST, instance=instance)
+        if diskusiForm.is_valid():
+            diskusiForm.save()
+            return redirect('listdiskusi')
+
+    context = {'diskusiForm': diskusiForm}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/editdiskusi.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def deletediskusi(request, sid):
+    navmenu = get_user_menu(request)
+    instance = Diskusi.objects.get(id=sid)
+    diskusiForm = DiskusiForm(instance=instance)
+
+    if request.method == "POST":
+        diskusiForm = DiskusiForm(request.POST, instance=instance)
+        instance.delete()
+        return redirect('listdiskusi')
+
+    context = {'diskusiForm': diskusiForm}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/deletediskusi.html', context)
+

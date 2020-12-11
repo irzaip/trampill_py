@@ -31,6 +31,10 @@ urlpatterns = [
     path('deleteujian/<str:sid>', views.deleteujian, name='deleteujian'),
     path('listsoal/', views.listsoal, name='listsoal'),
     path('add_soal/', views.addsoal, name='addsoal'),
-    path('editsoal/<str:sid>', views.editsoal, name='editsoal'),
-    path('deletesoal/<str:sid>', views.deletesoal, name='deletesoal'),
+    path('editsoal/<str:sid>/', views.editsoal, name='editsoal'),
+    path('deletesoal/<str:sid>/', views.deletesoal, name='deletesoal'),
+    path('materisaya/', views.materisaya, name='materisaya'),
+    path('listdiskusi/', views.listdiskusi, name='listdiskusi'),
+    path('editdiskusi/<str:sid>/', views.editdiskusi, name='editdiskusi'),
+    path('deletediskusi/<str:sid>/', views.deletediskusi, name='deletediskusi'),
 ]

@@ -15,7 +15,10 @@
             <h5 class="card-title">{{ materi.judul }}</h5>
             <p class="card-text">{{ materi.deskripsi }}</p>
             
+            <div class="row-mx-auto">
             <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
+            <a class="btn btn-warning"><i class="fas fa-heart"></i></a>
+            </div>
           </div>
           <div class="card-footer text-muted">
             

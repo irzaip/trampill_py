@@ -39,8 +39,49 @@
                             <a class="btn btn-primary btn-lg btn-block" href="{% url 'topic' next %}">Topic Berikut</a>
                         </div>
                     {% endif %}
+                </div>
+            
+                <hr>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col" >
+                        {% for d in diskusi %}
+                            <div class="card" style="margin-top: 5px;">
+                                <div class="row">
+                                <div class="col-sm-2">
+                                    <div class="card-header">
+                                    {{ d.user.username }}
+                                    </div>
+                                </div>
+                                <div class="col-xg-6">
+                                    <div class="card-body">
+                                        <p class="card-text"><strong>{{ topic_content.judul }}</strong>-{{ d.date_created }}</p>
+                                        <p class="card-text">{{ d.pesan }}</p>
+                                      </div>
+                                </div>
+                              </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="card" style="margin-top: 10px;">
+                            <div class="card-header">
+                              {{ request.user }}
+                            </div>
+                            <div class="card-body">
+                              <form action="" method="post">
+                                  {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="pesan" class="form-label">Ketik pesan diskusi</label>
+                                    <textarea class="form-control" name="pesan" id="pesan" rows="3"></textarea>
+                                  </div>
+                                <button class="btn btn-primary" type="submit">Tambah Diskusi</button>
+                              </form>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
+            </div>
                 <div class="col-4">
                     <ul class="nav nav-pills flex-column">
                     {% for i in topics %}

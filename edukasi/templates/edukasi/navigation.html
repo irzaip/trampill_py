@@ -39,14 +39,41 @@
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'listujian' %}">Daftar Ujian/Tugas</a>
             <a class="dropdown-item" href="{% url 'listsoal' %}">Daftar Soal</a>
-
-
             <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'listdiskusi' %}">Daftar Diskusi</a>
+
+
             <a class="dropdown-item" href="/admin/">Admin</a>
           </div>
         </li>
         {% endif %}
-  
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Materi Saya
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for p in pendaftaran %}
+            <a class="dropdown-item" href="/materi/{{ p.materi.id }}">{{ p.materi.judul }}</a>
+            {% endfor %}
+          </div>
+        </li>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Favorit
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for f in favorit %}
+            <a class="dropdown-item" href="/materi/{{ f.materi.id }}"> {{ f.materi.judul }}</a>
+            {% endfor %}
+          </div>
+        </li>
+        {% endif %}
+
       </ul>
 
       {% if request.user.is_authenticated  %}

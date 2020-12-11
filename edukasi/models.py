@@ -36,6 +36,10 @@ class Materi(models.Model):
     kategori = models.CharField(max_length=100, choices=KATEGORI)
     tags = models.ManyToManyField(Tag)
     summary = models.TextField()
+    harga = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0)
+    pengajar = models.CharField(max_length=40, null=True)
+    tentang_pengajar = models.TextField(null=True)
 
     def __str__(self):
         return self.judul
@@ -118,7 +122,25 @@ class Soal(models.Model):
     penjelasan = models.TextField()
     benarsalah = models.BooleanField(null=True, blank=True)
     multianswer = models.BooleanField(null=True, blank=True, default=False)
-    tags = models.ManyToManyField(TagSoal, null=True, blank=True)
+    tags = models.ManyToManyField(TagSoal)
+    jawaban_url = models.CharField(max_length=100, null=True)
+    jawaban_essay = models.TextField(null=True)
+    jawaban_a = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_b = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_c = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_d = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_e = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_f = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_g = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_h = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_1 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_2 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_3 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_4 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_5 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_6 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_7 = models.TextField(max_length=30, null=True, blank=True)
+    jawaban_8 = models.TextField(max_length=30, null=True, blank=True)
 
     def __str__(self):
         return self.judul
@@ -129,4 +151,37 @@ class Komplit(models.Model):
 
     def __str__(self):
         return self.user.username + "-" + self.topic.judul
+
+class Diskusi(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    pesan = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.user.username + "-" + self.topic.judul
+
+class Pembayaran(models.Model):
+    STATUS = (
+        ('posted', 'posted'),
+        ('blm diperiksa', 'blm diperiksa'),
+        ('disetujui', 'disetujui'),
+        ('ditolak', 'ditolak'),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE)
+    harga = models.IntegerField()
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    no_order = models.CharField(max_length=10)    
+    status = models.CharField(max_length=20, default='posted')
+
+
+class Pendaftaran(models.Model):
+    user =  models.ForeignKey(User, on_delete=models.CASCADE)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE)
+
+
+class Favorit(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE)
 

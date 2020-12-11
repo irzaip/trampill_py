@@ -17,7 +17,7 @@ class CreateUserForm(UserCreationForm):
             'last_name': 'Nama Belakang',
             'username': 'Username',
             'password2': 'Konfirmasi Password'}
-        help_texts = {'first_name': "Jangan gitu yaa", 'password1': ""}
+        help_texts = {'first_name': "Isi dengan nama depan anda.", 'password1': ""}
 
 
 class ExampleForm(forms.Form):
@@ -71,4 +71,9 @@ class UjianForm(ModelForm):
 class SoalForm(ModelForm):
     class Meta:
         model = Soal
+        fields = '__all__'
+
+class DiskusiForm(ModelForm):
+    class Meta:
+        model = Diskusi
         fields = '__all__'

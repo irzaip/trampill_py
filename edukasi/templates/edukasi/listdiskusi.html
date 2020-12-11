@@ -6,30 +6,32 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
-    <h2>List Ujian</h2>
-    <a class= "btn btn-primary" href="{% url 'addujian' %}">Tambah Ujian / Tugas</a>
-    <a class= "btn btn-secondary" href="{% url 'addsoal' %}">Tambah SOAL</a>
+    <h2>List Diskusi</h2>
     <div class="col-xs-1"></div>
     <div class="col-xs-3">
 <table class="table-sm table-condensed table-striped table-bordered">
     <thead>
         <tr>
             <th>id</th>
-            <th>Judul</th>
-            <th>Kode</th>
+            <th>User</th>
+            <th>Topic</th>
+            <th>pesan</th>
+            <th>date</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
     </thead>
     <tbody>
         
-        {% for i in listujian %}
+        {% for i in listdiskusi %}
         <tr>
             <td>{{ i.id }}</td>
-            <td>{{ i.judul }}</td>
-            <td>{{ i.kode }}</td>
-            <td><a class="btn btn-info" href="{% url 'editujian' i.id %}">Edit</a></td>
-            <td><a class="btn btn-danger" href="{% url 'deleteujian' i.id %}">Delete</a></td>
+            <td>{{ i.user.username }}</td>
+            <td>{{ i.topic.judul }}</td>
+            <td>{{ i.pesan }}</td>
+            <td>{{ i.date_created }}</td>
+            <td><a class="btn btn-info" href="{% url 'editdiskusi' i.id %}">Edit</a></td>
+            <td><a class="btn btn-danger" href="{% url 'deletediskusi' i.id %}">Delete</a></td>
         </tr>
         {% endfor %}
     </tbody>
