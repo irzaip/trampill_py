@@ -22,9 +22,15 @@ from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
 
 
+
 def get_user_menu(request):
-    pendaftaran = Pendaftaran.objects.filter(user=request.user)
-    favorit = Favorit.objects.filter(user=request.user)
+    try:
+        pendaftaran = Pendaftaran.objects.filter(user=request.user)
+        favorit = Favorit.objects.filter(user=request.user)
+    except:
+        pendaftaran = None
+        favorit = None
+
     navmenu = {'pendaftaran': pendaftaran, 'favorit': favorit}
     return navmenu
 
@@ -144,7 +150,7 @@ def homePage(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/home.html', context)
 
-@login_required(login_url='login')
+
 def listmateri(request):
     navmenu = get_user_menu(request)
     materis = Materi.objects.all()
@@ -176,12 +182,20 @@ def edittopic(request):
 @login_required(login_url='login')
 def topic(request, sid):
     navmenu = get_user_menu(request)
+
     try:
         sid = int(sid)
     except:
         sid = 0
+
     topic_content = Topic.objects.get(id=sid)
     materi = Materi.objects.get(id=topic_content.materi.id)
+    pendaftaran = Pendaftaran.objects.filter(user=request.user)
+    materi_terdaftar = [p.materi.id for p in pendaftaran]
+    
+    if materi.id not in materi_terdaftar:
+        return redirect('daftarmateri', materi.id)
+
     topics = Topic.objects.filter(materi=materi.id).order_by("no_urut")
 
     #HITUNG TOPIC SEBELUM DAN SESUDAH
@@ -237,7 +251,7 @@ def topic(request, sid):
 
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
         'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
-        'diskusiForm': diskusiForm
+        'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar
         }
     context = {**context, **navmenu}
     return render(request, 'edukasi/topic.html', context)
@@ -510,3 +524,38 @@ def deletediskusi(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/deletediskusi.html', context)
 
+
+def daftarmateri(request, sid):
+    navmenu = get_user_menu(request)
+
+    materi = Materi.objects.get(id=sid)
+    price = materi.harga
+
+    if request.method == "POST":
+        if price == 0:
+            pendaftaran = Pendaftaran.daftar(request.user, sid)
+            pendaftaran.save()
+            return redirect('materi',sid)
+        else:
+            pembayaran = Pembayaran.daftar(request.user, sid, price)
+            pembayaran.save()
+            return redirect('home')
+
+    context={'materi': materi, 'price': price}
+    context = {**context, **navmenu}
+
+    return render(request, 'edukasi/daftarmateri.html', context)
+
+
+def favorit(request, sid):
+    user = User.objects.get(username=request.user)
+    materi = Materi.objects.get(id=sid)
+    check_fav = Favorit.objects.filter(user=user, materi=materi)
+    
+    if not check_fav:
+        favorit = Favorit(user=user, materi=materi)
+        favorit.save()
+    else:
+        check_fav.delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))

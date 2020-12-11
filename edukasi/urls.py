@@ -37,4 +37,6 @@ urlpatterns = [
     path('listdiskusi/', views.listdiskusi, name='listdiskusi'),
     path('editdiskusi/<str:sid>/', views.editdiskusi, name='editdiskusi'),
     path('deletediskusi/<str:sid>/', views.deletediskusi, name='deletediskusi'),
+    path('daftarmateri/<str:sid>/', views.daftarmateri, name='daftarmateri'),
+    path('favorit/<str:sid>/', views.favorit, name='favorit'),
 ]

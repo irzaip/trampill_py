@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+import string, random
+
+
+def random_char(y):
+       return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
 # Create your models here.
 
@@ -89,12 +94,14 @@ class Pengumuman(models.Model):
         return str(self.date)
 
 class Message(models.Model):
-     sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
-     reciever = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
-     msg_content = models.TextField()
-     readed = models.BooleanField(default=False)
-     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
+    reciever = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
+    msg_content = models.TextField()
+    readed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
+    def __str__(self):
+        return self.sender.username + "-" + self.receiver.username
 
 
 class TagSoal(models.Model):
@@ -173,15 +180,36 @@ class Pembayaran(models.Model):
     harga = models.IntegerField()
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     no_order = models.CharField(max_length=10)    
-    status = models.CharField(max_length=20, default='posted')
+    status = models.CharField(max_length=20, choices=STATUS, default='posted')
 
+    @classmethod
+    def daftar(cls, user, materi, harga):
+        user = User.objects.get(username=user)
+        materi = Materi.objects.get(id=materi)
+        no_order = random_char(5).upper()
+        pembayaran = cls(user=user, materi=materi, no_order=no_order, harga=harga)
+        return pembayaran
+
+    def __str__(self):
+        return self.no_order + "-" + self.user.username + "-" + self.materi.judul + ":" + self.status
 
 class Pendaftaran(models.Model):
     user =  models.ForeignKey(User, on_delete=models.CASCADE)
     materi = models.ForeignKey(Materi, on_delete=models.CASCADE)
 
+    @classmethod
+    def daftar(cls, user, materi):
+        user = User.objects.get(username=user)
+        materi = Materi.objects.get(id=materi)
+        pendaftaran = cls(user=user, materi=materi)
+        return pendaftaran
+
+    def __str__(self):
+        return self.user.username + " - " + self.materi.judul
 
 class Favorit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     materi = models.ForeignKey(Materi, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.username + " - " + self.materi.judul
