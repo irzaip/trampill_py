@@ -11,6 +11,7 @@
         <form action="" method="post">
             {% csrf_token %} 
         <table>
+            {{ materi.media }}
             {{ materi.as_table }}
         </table>
         

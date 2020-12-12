@@ -39,4 +39,7 @@ urlpatterns = [
     path('deletediskusi/<str:sid>/', views.deletediskusi, name='deletediskusi'),
     path('daftarmateri/<str:sid>/', views.daftarmateri, name='daftarmateri'),
     path('favorit/<str:sid>/', views.favorit, name='favorit'),
+    path('listpembayaran', views.listpembayaran, name='listpembayaran'),
+    path('setujupembayaran/<str:sid>/', views.setujupembayaran, name='setujupembayaran'),
+    path('tolakpembayaran/<str:sid>/', views.tolakpembayaran, name='tolakpembayaran'),
 ]

@@ -30,13 +30,13 @@
                 <div class="row">
                     {% if prev != 0 %}
                         <div class="col">
-                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'topic' prev %}">Mundur</a>
+                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'topic' prev %}"><i class="far fa-caret-square-left"></i>  Mundur</a>
                         </div>
                     {% endif %}
 
                     {% if next != 0 %}
                         <div class="col">
-                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'topic' next %}">Topic Berikut</a>
+                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'topic' next %}">Topic Berikut  <i class="far fa-caret-square-right"></i></a>
                         </div>
                     {% endif %}
                 </div>

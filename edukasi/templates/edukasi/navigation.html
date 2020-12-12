@@ -25,29 +25,6 @@
         </li>
         {% endif %}
 
-        {% if request.user.is_superuser %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Admin Menu
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'register' %}">Register</a>
-            <a class="dropdown-item" href="{% url 'login' %}">Login</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'listmateri' %}">List Materi</a>
-            <a class="dropdown-item" href="{% url 'add_materi' %}">Tambah Materi Baru</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'listujian' %}">Daftar Ujian/Tugas</a>
-            <a class="dropdown-item" href="{% url 'listsoal' %}">Daftar Soal</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'listdiskusi' %}">Daftar Diskusi</a>
-
-
-            <a class="dropdown-item" href="/admin/">Admin</a>
-          </div>
-        </li>
-        {% endif %}
-
         {% if request.user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -73,6 +50,27 @@
           </div>
         </li>
         {% endif %}
+
+        {% if request.user.is_superuser %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Admin Menu
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'listmateri' %}">List Materi</a>
+            <a class="dropdown-item" href="{% url 'add_materi' %}">Tambah Materi Baru</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'listujian' %}">Daftar Ujian/Tugas</a>
+            <a class="dropdown-item" href="{% url 'listsoal' %}">Daftar Soal</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'listdiskusi' %}">Daftar Diskusi</a>
+            <a class="dropdown-item" href="{% url 'listpembayaran' %}">Daftar Pembayaran</a>              
+
+            <a class="dropdown-item" href="/admin/">Admin</a>
+          </div>
+        </li>
+        {% endif %}
+
 
       </ul>
 

@@ -7,6 +7,20 @@
  <div class="album py-5 bg-light">
    <div class="container">
       <div class="row-md-3 justify-content-center"><h1 class="text-center">Daftar Materi</h1></div>
+
+      <a class="btn btn-primary" data-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Filter Materi
+      </a>
+      <div class="collapse" id="filterCollapse">
+        <div class="row justify-content-md-center">
+          <form action="" method="get" class="col col-lg">
+            {{ mFilter.form.as_table}}
+            <button type="submit" class="btn btn-primary">FILTER</button>
+          </form>
+        </div>
+      </div>
+
+
       <div class="row">
         {% for i in materis %}
         

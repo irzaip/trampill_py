@@ -12,13 +12,41 @@
             {{ materi.kategori }}
           </div>
           <div class="card-body">
-            <h5 class="card-title">{{ materi.judul }}</h5>
-            <p class="card-text">{{ materi.deskripsi }}</p>
+            <h2 class="card-title">{{ materi.judul }}</h2>
+            <p class="card-text">{{ materi.deskripsi | safe }}</p>
             
             <div class="row-mx-auto">
             <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
             <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
             </div>
+
+            <div class="row mx-auto" style="margin-top: 20px;">
+              <div class="col-2"></div>
+              <div class="col-8">
+                <hr>
+                <h3>Konten Materi</h3>
+                <ul class="nav nav-pills flex-column">
+                  {% for i in topics %}
+                      <li class="nav-item border">
+                          {% if i.id == sid %}
+                              <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                          {% else %}
+                              <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                          {% endif %}
+                      </li>
+                  {% endfor %}
+                  </ul>
+                  <hr>
+                  <div class="row-mx-auto" style="margin-top: 30px;">
+                    <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
+                    <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
+                  </div>
+                          
+              </div>
+              <div class="col-2"></div>
+            </div>
+      
+            
           </div>
           <div class="card-footer text-muted">
             
@@ -28,6 +56,7 @@
         </div>
       </div>
       <div class="col-1"></div>
+
     </div>
    </div>
 

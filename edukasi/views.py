@@ -154,7 +154,11 @@ def homePage(request):
 def listmateri(request):
     navmenu = get_user_menu(request)
     materis = Materi.objects.all()
-    context = {'materis': materis}
+    
+    mFilter = MateriFilter(request.GET, queryset=materis)
+    materis = mFilter.qs
+
+    context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
 
@@ -168,7 +172,9 @@ def materi(request, sid):
     except:
         tags = ""
 
-    context = {'materi': materi, 'starttopic': starttopic, 'tags': tags}
+    topics = Topic.objects.filter(materi=materi.id)
+
+    context = {'materi': materi, 'starttopic': starttopic, 'tags': tags, 'topics': topics}
     context = {**context, **navmenu}
     return render(request, 'edukasi/materi.html', context)
 
@@ -559,3 +565,32 @@ def favorit(request, sid):
         check_fav.delete()
 
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+def listpembayaran(request):
+    navmenu = get_user_menu(request)
+
+    listpembayaran = Pembayaran.objects.all().order_by('-date_created')
+
+    context={'listpembayaran': listpembayaran}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/listpembayaran.html', context)    
+
+def setujupembayaran(request,sid):
+
+    pembayaran = Pembayaran.objects.get(id=sid)
+    pembayaran.status = 'disetujui'
+    pembayaran.save()
+
+    pendaftaran = Pendaftaran.daftar(pembayaran.user, pembayaran.materi.id)
+    pendaftaran.save()
+
+    return redirect('listpembayaran')
+
+def tolakpembayaran(request,sid):
+
+    pembayaran = Pembayaran.objects.get(id=sid)
+    pembayaran.status = 'ditolak'
+    pembayaran.save()
+
+    return redirect('listpembayaran')

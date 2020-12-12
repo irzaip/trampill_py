@@ -1,0 +1,63 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<script>
+    function clicked(e)
+    {
+        if(!confirm('Are you sure?')) {
+            e.preventDefault();
+        }
+    }
+    </script>
+
+<div class="container-md" style="margin-top: 20px;">
+    <h2>List Pembayaran</h2>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+        <table class="table-sm table-condensed table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>User</th>
+                    <th>Materi</th>
+                    <th>No order</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Setujui</th>
+                    <th>Tolak</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for i in listpembayaran %}
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.user.username }}</td>
+                    <td>{{ i.materi.judul }}</td>
+                    <td>{{ i.no_order }}</td>
+                    <td>{{ i.date_created }}</td>
+                    <td>{{ i.status }}</td>
+                    <td>
+                        {% if i.status == 'posted' %}
+                        <a onclick="clicked(event)" class="btn btn-info" href="{% url 'setujupembayaran' i.id %}">Setujui</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.status == 'posted' %}                        
+                        <a onclick="clicked(event)" class="btn btn-danger" href="{% url 'tolakpembayaran' i.id %}">Tolak</a>
+                        {% endif %}                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+      
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import string, random
+from ckeditor.fields import RichTextField
 
 
 def random_char(y):
@@ -33,18 +34,30 @@ class Materi(models.Model):
         ('Koding Playlist', 'Koding Playlist'),
         ('Projects', 'Projects'),
     )
+    RATING = (
+        ('dasar','dasar'),
+        ('menengah', 'menengah'),
+        ('mahir','mahir'),
+    )
 
     judul = models.CharField(max_length=200)
     kode = models.CharField(max_length=20, null=True)
-    deskripsi = models.TextField(null=True, blank=True)
+    rating = models.CharField(max_length=20, default='dasar', choices=RATING)
+    pendek = models.CharField(max_length=300,null=True)
+    deskripsi = RichTextField(null=True, blank=True)
     gambar = models.ImageField(null=True, blank=True)
     kategori = models.CharField(max_length=100, choices=KATEGORI)
     tags = models.ManyToManyField(Tag)
-    summary = models.TextField()
+    copywrite = RichTextField(null=True)
     harga = models.IntegerField(default=0)
     discount = models.IntegerField(default=0)
     pengajar = models.CharField(max_length=40, null=True)
-    tentang_pengajar = models.TextField(null=True)
+    tentang_pengajar = RichTextField(null=True)
+    hidden = models.BooleanField(default=False)
+    featured = models.BooleanField(default=False)
+    frontpage = models.BooleanField(default=False)
+    playlist = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.judul
@@ -75,7 +88,7 @@ class Topic(models.Model):
     judul = models.CharField(max_length = 50)
     jenis = models.CharField(max_length=20, choices=JENIS)
     link = models.CharField(max_length=250, null=True, blank=True)
-    isi_tambahan = models.TextField(null=True, blank=True)
+    isi_tambahan = RichTextField(null=True, blank=True)
     tugas = models.ForeignKey(Ujian, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -86,7 +99,7 @@ class Pengumuman(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     judul = models.CharField(max_length=100,null=True)
     date = models.DateTimeField(auto_now_add=True, null=True)
-    isi = models.TextField()
+    isi = RichTextField()
     display = models.BooleanField(default=False)
     frontpage = models.BooleanField(default=False)
 
@@ -131,7 +144,7 @@ class Soal(models.Model):
     multianswer = models.BooleanField(null=True, blank=True, default=False)
     tags = models.ManyToManyField(TagSoal)
     jawaban_url = models.CharField(max_length=100, null=True)
-    jawaban_essay = models.TextField(null=True)
+    jawaban_essay = RichTextField(null=True)
     jawaban_a = models.TextField(max_length=30, null=True, blank=True)
     jawaban_b = models.TextField(max_length=30, null=True, blank=True)
     jawaban_c = models.TextField(max_length=30, null=True, blank=True)
@@ -213,3 +226,4 @@ class Favorit(models.Model):
 
     def __str__(self):
         return self.user.username + " - " + self.materi.judul
+
