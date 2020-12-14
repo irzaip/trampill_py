@@ -237,6 +237,11 @@ def topic(request, sid):
         addkomplit = Komplit(topic=tsid, user=request.user)
         addkomplit.save()
 
+    if topic_content.tugas:
+        tugas = Ujian.objects.get(id=topic_content.tugas.id)
+    else:
+        tugas = ""
+
     diskusi = Diskusi.objects.filter(topic=sid)
     diskusiForm = DiskusiForm()
     if request.method == "POST":
@@ -257,7 +262,7 @@ def topic(request, sid):
 
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
         'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
-        'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar
+        'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar, 'tugas': tugas
         }
     context = {**context, **navmenu}
     return render(request, 'edukasi/topic.html', context)
@@ -442,17 +447,20 @@ def listsoal(request):
     return render(request, 'edukasi/listsoal.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
-def addsoal(request):
+def addsoal(request, sid):
     navmenu = get_user_menu(request)
-    soal = SoalForm()
-    
+    instance = Ujian.objects.get(id=sid)
+    soal = SoalForm(initial={'ujian': instance.id})
+
+    all_soal = Soal.objects.filter(ujian=sid)
+
     if request.method=="POST":
-        soal = SoalForm(request.POST)
+        soal = SoalForm(request.POST, initial={'ujian': instance.id})
         if soal.is_valid():
             soal.save()
             return redirect('listsoal')
 
-    context = {'soal': soal}
+    context = {'soal': soal, 'all_soal': all_soal}
     context = {**context, **navmenu}
     return render(request, 'edukasi/addsoal.html', context)
 
@@ -477,7 +485,7 @@ def deletesoal(request, sid):
     instance = Soal.objects.get(id=sid)
     soalform = SoalForm(instance=instance)
     if request.method=="POST":
-        soalform = UjianForm(request.POST, instance=instance)
+        soalform = SoalForm(request.POST, instance=instance)
         instance.delete()
         return redirect('listsoal')
 

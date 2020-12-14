@@ -27,6 +27,20 @@
                         <a class="btn btn-info btn-block" href="{{ topic_content.link }}">{{ topic_content.judul }}</a>
                     </div>
                     {% endif %}
+
+                <hr>
+
+                {% if tugas != "" %}
+                <div class="card border-info mb-3">
+                    <div class="card-header" style="background-color: aquamarine;"><h4>{{ tugas.judul }}</h4></div>
+                    <div class="card-body">
+                      <p class="card-text">{{ tugas.deskripsi }}</p>
+                      <p><a class="btn btn-info" href="/ujiansoal/{{ tugas.id }}">Klik disini untuk melihat detail</a></p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <hr>    
                 <div class="row">
                     {% if prev != 0 %}
                         <div class="col">
@@ -40,7 +54,12 @@
                         </div>
                     {% endif %}
                 </div>
-            
+                <hr>
+                
+                
+
+
+
                 <hr>
                 <div class="row" style="margin-top: 20px;">
                     <div class="col" >

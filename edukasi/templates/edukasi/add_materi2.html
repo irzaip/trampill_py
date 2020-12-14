@@ -21,6 +21,7 @@
                     <th scope="col">Jenis</th>
                     <th scope="col">Link</th>
                     <th scope="col">Isi</th>
+                    <th scope="col">Tugas</th>
                     <th scope="col">Edit</th>
                     <th scope="col">Delete</th>
                 </tr>
@@ -33,6 +34,7 @@
                     <td><p>{{ i.jenis }}</p></td>
                     <td><p>{{ i.link }}</p></td>
                     <td><p>{{ i.isi }}</p></td>
+                    <td><p>{{ i.tugas }}</p></td>
                     <td><a href="/edittopic/{{ i.id}}" class="btn btn-sm btn-primary">Edit</a></td>
                     <td><a href="/deltopic/{{i.id}}" class="btn btn-sm btn-danger">X</a></td>
                 </tr>

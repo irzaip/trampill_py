@@ -6,6 +6,42 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+        <table class="table-sm table-condensed table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Kode</th>
+                    <th>No Urut</th>
+                    <th>Judul</th>
+                    <th>Deskripsi</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for i in all_soal %}
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.kode }}</td>
+                    <td>{{ i.no_urut }}</td>
+                    <td>{{ i.judul }}</td>
+                    <td>{{ i.deskripsi }}</td>
+                    <td><a class="btn btn-info" href="{% url 'editsoal' i.id %}">Edit</a></td>
+                    <td><a class="btn btn-danger" href="{% url 'deletesoal' i.id %}">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <hr>
+    <style>
+    textarea {height: 2em;}
+    </style>
+        
     <h2>Tambah Soal</h2>
     <div class="col-md-6">
         <form action="" method="post">
