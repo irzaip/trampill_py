@@ -3,6 +3,8 @@
 
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 
 <div class="container-md" style="margin-top: 20px;">
@@ -15,7 +17,7 @@
                     <th>Kode</th>
                     <th>No Urut</th>
                     <th>Judul</th>
-                    <th>Deskripsi</th>
+                    <th>Pertanyaan</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -28,7 +30,7 @@
                     <td>{{ i.kode }}</td>
                     <td>{{ i.no_urut }}</td>
                     <td>{{ i.judul }}</td>
-                    <td>{{ i.deskripsi }}</td>
+                    <td>{{ i.pertanyaan }}</td>
                     <td><a class="btn btn-info" href="{% url 'editsoal' i.id %}">Edit</a></td>
                     <td><a class="btn btn-danger" href="{% url 'deletesoal' i.id %}">Delete</a></td>
                 </tr>
@@ -56,5 +58,186 @@
 
 </div>
 
+<script>
+$("#id_tipe").change(function() {
+  if ($(this).val() == "Pilihan Ganda") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').show();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').show();
+    $('#id_jawaban_b').show();
+    $('#id_jawaban_c').show();
+    $('#id_jawaban_d').show();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').show();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    } 
+  else if ($(this).val() == "Betul / Salah") {
+    $('#id_benarsalah').show();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').hide();
+    $('#id_jawaban_b').hide();
+    $('#id_jawaban_c').hide();
+    $('#id_jawaban_d').hide();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').hide();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }
+  else if ($(this).val() == "Mencocokkan") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').show();
+    $('#id_jawaban_b').show();
+    $('#id_jawaban_c').show();
+    $('#id_jawaban_d').show();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').show();
+    $('#id_jawaban_2').show();
+    $('#id_jawaban_3').show();
+    $('#id_jawaban_4').show();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }  
+  else if ($(this).val() == "Jawab singkat") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').show();
+    $('#id_jawaban_b').hide();
+    $('#id_jawaban_c').hide();
+    $('#id_jawaban_d').hide();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').hide();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }
+  else if ($(this).val() == "Numerik") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').show();
+    $('#id_jawaban_b').hide();
+    $('#id_jawaban_c').hide();
+    $('#id_jawaban_d').hide();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').hide();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }
+  else if ($(this).val() == "Essay") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').show();
+    $('#id_jawaban_a').hide();
+    $('#id_jawaban_b').hide();
+    $('#id_jawaban_c').hide();
+    $('#id_jawaban_d').hide();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').hide();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }
+  else if ($(this).val() == "Kumpul URL") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').show();
+    $('#id_jawaban_essay').hide();
+    $('#id_jawaban_a').hide();
+    $('#id_jawaban_b').hide();
+    $('#id_jawaban_c').hide();
+    $('#id_jawaban_d').hide();
+    $('#id_jawaban_e').hide();
+    $('#id_jawaban_f').hide();
+    $('#id_jawaban_g').hide();
+    $('#id_jawaban_h').hide();
+    $('#id_jawaban_1').hide();
+    $('#id_jawaban_2').hide();
+    $('#id_jawaban_3').hide();
+    $('#id_jawaban_4').hide();
+    $('#id_jawaban_5').hide();
+    $('#id_jawaban_6').hide();
+    $('#id_jawaban_7').hide();
+    $('#id_jawaban_8').hide();
+    }
+  else if ($(this).val() == "Lain-lain") {
+    $('#id_benarsalah').hide();
+    $('#id_multianswer').hide();
+    $('#id_jawaban_url').hide();
+    $('#id_jawaban_essay').show();
+    $('#id_jawaban_a').show();
+    $('#id_jawaban_b').show();
+    $('#id_jawaban_c').show();
+    $('#id_jawaban_d').show();
+    $('#id_jawaban_e').show();
+    $('#id_jawaban_f').show();
+    $('#id_jawaban_g').show();
+    $('#id_jawaban_h').show();
+    $('#id_jawaban_1').show();
+    $('#id_jawaban_2').show();
+    $('#id_jawaban_3').show();
+    $('#id_jawaban_4').show();
+    $('#id_jawaban_5').show();
+    $('#id_jawaban_6').show();
+    $('#id_jawaban_7').show();
+    $('#id_jawaban_8').show();
+     }
+});
+$("#id_tipe").trigger("change");  
+</script>
       
 {% endblock %}

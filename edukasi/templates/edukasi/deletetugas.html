@@ -6,7 +6,7 @@
 
 
 <div class="container-md" style="margin-top: 20px;">
-    <h2>Edit Ujian</h2>
+    <h2>HAPUS Tugas</h2>
     <div class="col-md-6">
         <form action="" method="post">
             {% csrf_token %} 
@@ -14,7 +14,7 @@
             {{ ujianform.as_table }}
         </table>
 
-        <button type="submit">Submit</button>
+        <button class="btn btn-danger" type="submit">HAPUS</button>
         </form>
     </div>
 

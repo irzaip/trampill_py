@@ -62,9 +62,9 @@ class MateriForm(ModelForm):
             'judul': 'Tulis judul yang anda inginkan disini.'
         }
 
-class UjianForm(ModelForm):
+class TugasForm(ModelForm):
     class Meta:
-        model = Ujian
+        model = Tugas
         fields = '__all__'
 
 

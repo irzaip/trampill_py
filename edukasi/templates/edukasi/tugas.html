@@ -1,0 +1,101 @@
+{% extends 'edukasi/main.html' %}
+
+{% block content %}
+   <div class="container-fluid" style="margin-top: 20px;">
+
+    <div class="row">
+      <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-8">
+                    <h3>{{ materi.judul }}</h3>
+                    <h4>{{ topic_content.judul}}</h4>
+
+
+                {% if tugas != "" %}
+                <div class="card border-info mb-3">
+                    <div class="card-header" style="background-color: aquamarine;"><h4>{{ tugas.judul }}    <a class="btn btn-info" href="/topic/{{ topic_asal }}">Kembali</a></h4></div>
+                    <div class="card-body">
+                      <p class="card-text">{{ tugas.deskripsi }}</p>
+                      
+                    </div>
+                        {% for i in soal %}
+                        <div class="card border-warning mb-3" style="margin:10px">
+                            <div class="card-header">{{ i.judul }} - [ {{ i.tipe }} ]</div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{i.pertanyaan}}</h5>
+                                
+                                <form action="/periksa/{{ i.id }}/?topic_asal={{ topic_content.id }}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id_idsoal" value="{{ i.id }}">
+                                    <input type="hidden" name="topic_asal" value="{{ topic_asal }}">
+                                    <input type="hidden" name="materi" value="{{ materi.id }}">
+                                    <input type="hidden" name="tugas" value="{{ tugas.id }}">
+                                    {% if i.tipe == "Kumpul URL" %}
+                                    <p class="card-text">
+                                    Tulis jawaban anda disini:
+                                    </p>
+                                    <textarea name="id_jawaban_url" id="" cols="80" rows="2"></textarea>
+                                    {% endif %}
+
+                                    {% if i.tipe == "Essay" %}
+                                    <p class="card-text">
+                                    Tulis jawaban anda disini:
+                                    </p>
+                                    <textarea name="id_jawaban_essay" id="" cols="80" rows="3"></textarea>
+                                    {% endif %}
+
+
+                                    {% if i.tipe == "Pilihan Ganda" %}
+                                    <p class="card-text">
+                                    A. {{ i.jawaban_a }}<br>
+                                    B. {{ i.jawaban_b }}<br>
+                                    C. {{ i.jawaban_c }}<br>
+                                    D. {{ i.jawaban_d }}<br>
+                                    <br>
+                                    Pilih jawaban anda disini:
+                                    </p>
+                                    <select name="id_select" id="">
+                                        <option value="-">-</option> 
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </select>
+                                    {% endif %}
+
+                                    {% if i.tipe == "Betul / Salah" %}
+                                    <p class="card-text">
+                                    Menurut kamu pernyataan diatas?:
+                                    </p>
+                                    <select name="id_select" id="id_select">
+                                        <option value="-">-</option> 
+                                        <option value="True">BETUL</option>
+                                        <option value="False">SALAH</option>
+                                    </select>
+                                    {% endif %}
+
+
+
+
+                                    <button class="btn btn-primary" type="submit">Jawab</button>
+                                </form>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                </div>
+                {% endif %}
+
+                <hr>    
+            </div>
+        </div>
+      <div class="col-md-1"></div>
+    </div>
+
+
+   </div>
+
+      
+{% endblock %}

@@ -35,7 +35,7 @@
                     <div class="card-header" style="background-color: aquamarine;"><h4>{{ tugas.judul }}</h4></div>
                     <div class="card-body">
                       <p class="card-text">{{ tugas.deskripsi }}</p>
-                      <p><a class="btn btn-info" href="/ujiansoal/{{ tugas.id }}">Klik disini untuk melihat detail</a></p>
+                      <p><a class="btn btn-info" href="/tugas/{{ tugas.id }}/?topic_asal={{ topic_content.id }}&materi={{ materi.id }}">Klik disini untuk melihat detail</a></p>
                     </div>
                 </div>
                 {% endif %}

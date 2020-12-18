@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -238,7 +238,7 @@ def topic(request, sid):
         addkomplit.save()
 
     if topic_content.tugas:
-        tugas = Ujian.objects.get(id=topic_content.tugas.id)
+        tugas = Tugas.objects.get(id=topic_content.tugas.id)
     else:
         tugas = ""
 
@@ -386,56 +386,56 @@ def deltopic(request, sid):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def listujian(request):
+def listtugas(request):
     navmenu = get_user_menu(request)
-    listujian = Ujian.objects.all()
+    listtugas = Tugas.objects.all()
     
-    context = {'listujian': listujian}
+    context = {'listtugas': listtugas}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/listujian.html', context)
+    return render(request, 'edukasi/listtugas.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
-def addujian(request):
+def addtugas(request):
     navmenu = get_user_menu(request)
-    ujian = UjianForm()
+    tugas = TugasForm()
 
     if request.method=="POST":
-        ujian = UjianForm(request.POST)
-        if ujian.is_valid():
-            ujian.save()
-            return redirect('listujian')
+        tugas = TugasForm(request.POST)
+        if tugas.is_valid():
+            tugas.save()
+            return redirect('listtugas')
 
-    context = {'ujian': ujian}
+    context = {'tugas': tugas}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/addujian.html', context)
+    return render(request, 'edukasi/addtugas.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
-def editujian(request,sid):
+def edittugas(request,sid):
     navmenu = get_user_menu(request)
-    instance = Ujian.objects.get(id=sid)
-    ujianform = UjianForm(instance=instance)
+    instance = Tugas.objects.get(id=sid)
+    tugasform = TugasForm(instance=instance)
     if request.method == "POST":
-        ujianform = UjianForm(request.POST,instance=instance)
-        if ujianform.is_valid():
-            ujianform.save()
+        tugasform = TugasForm(request.POST,instance=instance)
+        if tugasform.is_valid():
+            tugasform.save()
 
-    context = {'ujianform': ujianform}
+    context = {'tugasform': tugasform}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/editujian.html', context)
+    return render(request, 'edukasi/edittugas.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
-def deleteujian(request, sid):
+def deletetugas(request, sid):
     navmenu = get_user_menu(request)
-    instance = Ujian.objects.get(id=sid)
-    ujianform = UjianForm(instance=instance)
+    instance = Tugas.objects.get(id=sid)
+    tugasform = TugasForm(instance=instance)
     if request.method=="POST":
-        ujianform = UjianForm(request.POST, instance=instance)
+        tugasform = TugasForm(request.POST, instance=instance)
         instance.delete()
-        return redirect('listujian')
+        return redirect('listtugas')
 
-    context = {'ujianform': ujianform}
+    context = {'tugasform': tugasform}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/deleteujian.html', context)
+    return render(request, 'edukasi/deletetugas.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def listsoal(request):
@@ -449,13 +449,13 @@ def listsoal(request):
 @user_passes_test(lambda u: u.is_superuser)
 def addsoal(request, sid):
     navmenu = get_user_menu(request)
-    instance = Ujian.objects.get(id=sid)
-    soal = SoalForm(initial={'ujian': instance.id})
+    instance = Tugas.objects.get(id=sid)
+    soal = SoalForm(initial={'tugas': instance.id})
 
-    all_soal = Soal.objects.filter(ujian=sid)
+    all_soal = Soal.objects.filter(tugas=sid)
 
     if request.method=="POST":
-        soal = SoalForm(request.POST, initial={'ujian': instance.id})
+        soal = SoalForm(request.POST, initial={'tugas': instance.id})
         if soal.is_valid():
             soal.save()
             return redirect('listsoal')
@@ -474,6 +474,7 @@ def editsoal(request,sid):
         soalform = SoalForm(request.POST,instance=instance)
         if soalform.is_valid():
             soalform.save()
+            return redirect('addsoal', instance.tugas.id)
 
     context = {'soalform': soalform}
     context = {**context, **navmenu}
@@ -602,3 +603,118 @@ def tolakpembayaran(request,sid):
     pembayaran.save()
 
     return redirect('listpembayaran')
+
+def tugas(request,sid, topic_asal=None):
+    navmenu = get_user_menu(request)
+
+    tugas = Tugas.objects.get(id=sid)
+    soal = Soal.objects.filter(tugas=sid)
+    topic_content = Topic.objects.get(id=request.GET.get("topic_asal"))
+    materi = Materi.objects.get(id=topic_content.materi.id)
+
+    pendaftaran = Pendaftaran.objects.filter(user=request.user)
+    materi_terdaftar = [p.materi.id for p in pendaftaran]
+
+    topics = Topic.objects.filter(materi=materi.id).order_by("no_urut")
+
+    #HITUNG TOPIC SEBELUM DAN SESUDAH
+    sequence_topics = [i.id for i in topics]
+    sidindex = sequence_topics.index(topic_content.id)
+    if sidindex == 0 and len(sequence_topics) == 1:
+        next = 0
+        prev = 0
+    elif sidindex == 0 and len(sequence_topics) > 0:
+        next = sequence_topics[1]
+        prev = 0
+    elif sidindex == len(sequence_topics) - 1:
+        next = 0
+        prev = sequence_topics[sidindex-1]
+    else:
+        next = sequence_topics[sidindex+1]
+        prev = sequence_topics[sidindex-1]
+
+    prevpage = request.META.get('HTTP_REFERER')
+    topic_asal = ""
+
+    if request.method == "GET":
+        topic_asal = request.GET.get('topic_asal')
+    
+    if request.method == "POST":
+        soal = request.POST.get('id_idsoal')
+        
+
+    
+    context={'tugas': tugas, 'topic_content': topic_content, 'materi': materi, 'soal': soal, 
+        'topics': topics, 'prevpage': prevpage, 'topic_asal': topic_asal}
+    context = {**context, **navmenu}
+
+    return render(request, 'edukasi/tugas.html', context)
+
+
+def periksa(request,sid, topic_asal=None):
+    
+    if request.method=="POST":
+        idsoal = request.POST.get("id_idsoal")
+        soal = Soal.objects.get(id=idsoal)
+
+        topic = Topic.objects.get(id=request.POST.get("topic_asal"))
+        tugas = Tugas.objects.get(id=request.POST.get("tugas"))
+        materi = Materi.objects.get(id=request.POST.get("materi"))
+
+        if soal.tipe == "Betul / Salah":
+            if request.POST.get("id_select") == str(soal.benarsalah):
+                #apabila BENAR
+                jawab_ = request.POST.get("id_select")
+                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
+                jawaban.save()
+
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                return HttpResponseRedirect(url)
+            else:
+                jawab_ = request.POST.get("id_select")
+                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 10, False)
+                jawaban.save()
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                return HttpResponseRedirect(url)
+
+        if soal.tipe == "Kumpul URL":
+            jawab_ = request.POST.get("id_jawaban_url")
+            jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
+            jawaban.save()
+            #Send message to admin
+            message = Message.create_msg(request.user, "admin", "Kumpul URL to be checked", False)
+            message.save()
+
+
+            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+            return HttpResponseRedirect(url)
+            
+        if soal.tipe == "Essay":
+            jawab_ = request.POST.get("id_jawaban_essay")
+            jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
+            jawaban.save()
+            #Send message to admin
+            message = Message.create_msg(request.user, "admin", "Essay to be checked", False)
+            message.save()
+
+            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+            return HttpResponseRedirect(url)
+
+        if soal.tipe == "Pilihan Ganda":
+            if request.POST.get("id_select") == str(soal.jawaban_1).upper():
+                jawab_ = request.POST.get("id_select")
+                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
+                jawaban.save()
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                return HttpResponseRedirect(url)
+            else:
+                jawab_ = request.POST.get("id_select")
+                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, False)
+                jawaban.save()
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                return HttpResponseRedirect(url)
+
+    
+    
+    url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+    return HttpResponseRedirect(url)

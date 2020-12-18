@@ -62,7 +62,7 @@ class Materi(models.Model):
     def __str__(self):
         return self.judul
 
-class Ujian(models.Model):
+class Tugas(models.Model):
     judul = models.CharField(max_length=25)
     kode = models.CharField(max_length=10, null=True, blank=True)
     deskripsi = models.TextField()
@@ -89,7 +89,7 @@ class Topic(models.Model):
     jenis = models.CharField(max_length=20, choices=JENIS)
     link = models.CharField(max_length=250, null=True, blank=True)
     isi_tambahan = RichTextField(null=True, blank=True)
-    tugas = models.ForeignKey(Ujian, null=True, blank=True, on_delete=models.CASCADE)
+    tugas = models.ForeignKey(Tugas, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.id) + str("-") + str(self.materi) + str("-") + str(self.no_urut) + str("-") + str(self.judul)
@@ -108,10 +108,17 @@ class Pengumuman(models.Model):
 
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
-    reciever = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
     msg_content = models.TextField()
     readed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    @classmethod
+    def create_msg(cls, sender, receiver, msg_content, readed):
+        sender = User.objects.get(username=sender)
+        receiver = User.objects.get(username=receiver)
+        message = cls(sender=sender, receiver=receiver, msg_content=msg_content, readed=readed)
+        return message
 
     def __str__(self):
         return self.sender.username + "-" + self.receiver.username
@@ -134,7 +141,7 @@ class Soal(models.Model):
         ('Kumpul URL', 'Kumpul URL'),
         ('Lain-lain', 'Lain-lain'),
     )
-    ujian = models.ForeignKey(Ujian, on_delete=models.CASCADE )
+    tugas = models.ForeignKey(Tugas, on_delete=models.CASCADE )
     no_urut = models.IntegerField()
     tipe = models.CharField(max_length=20, choices=TIPE)
     judul = models.CharField(max_length=25)
@@ -142,7 +149,7 @@ class Soal(models.Model):
     penjelasan = models.TextField()
     benarsalah = models.BooleanField(null=True, blank=True)
     multianswer = models.BooleanField(null=True, blank=True, default=False)
-    tags = models.ManyToManyField(TagSoal, null=True, blank=True)
+    tags = models.ManyToManyField(TagSoal, blank=True)
     jawaban_url = models.CharField(max_length=100, null=True, blank=True)
     jawaban_essay = RichTextField(null=True, blank=True)
     jawaban_a = models.TextField(max_length=30, null=True, blank=True)
@@ -227,3 +234,37 @@ class Favorit(models.Model):
     def __str__(self):
         return self.user.username + " - " + self.materi.judul
 
+
+class Jawaban(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    tugas = models.ForeignKey(Tugas, on_delete=models.CASCADE)
+    soal = models.ForeignKey(Soal, on_delete=models.CASCADE)
+    jawaban = models.TextField(null=True, blank=True)
+    nilai = models.IntegerField(default=0)
+    check = models.BooleanField(default=False)
+
+    @classmethod
+    def berinilai(cls, user, topic, tugas, soal, jawaban, nilai, check):
+
+        #check first
+        user = User.objects.get(username=user)
+        topic = Topic.objects.get(id=topic)
+        tugas = Tugas.objects.get(id=tugas)
+        soal = Soal.objects.get(id=soal)
+
+        check_ = Jawaban.objects.filter(user=user.id)
+        check_ = check_.filter(topic=topic.id)
+        check_ = check_.filter(tugas=tugas.id)
+        check_ = check_.filter(soal=soal.id)
+        
+        if not check_:
+            nilai = cls(user=user, topic=topic,tugas=tugas, soal=soal, jawaban=jawaban, nilai=nilai, check=check)
+        else:
+            check_.delete()
+            nilai = cls(user=user, topic=topic,tugas=tugas, soal=soal, jawaban=jawaban, nilai=nilai, check=check)
+
+        return nilai
+
+    def __str__(self):
+        return str(self.id) + "-" + self.user.username + "-" + str(self.soal.id) + "-" + self.soal.pertanyaan
