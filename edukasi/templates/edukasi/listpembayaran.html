@@ -25,6 +25,7 @@
                     <th>Materi</th>
                     <th>No order</th>
                     <th>Date Created</th>
+                    <th>Total</th>
                     <th>Status</th>
                     <th>Setujui</th>
                     <th>Tolak</th>
@@ -39,6 +40,7 @@
                     <td>{{ i.materi.judul }}</td>
                     <td>{{ i.no_order }}</td>
                     <td>{{ i.date_created }}</td>
+                    <td>{{ i.harga }}</td>
                     <td>{{ i.status }}</td>
                     <td>
                         {% if i.status == 'posted' %}

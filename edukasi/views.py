@@ -20,18 +20,21 @@ from django.core.mail import EmailMessage
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
-
+import random
 
 
 def get_user_menu(request):
     try:
         pendaftaran = Pendaftaran.objects.filter(user=request.user)
         favorit = Favorit.objects.filter(user=request.user)
+        pesan = Message.objects.filter(receiver=request.user, readed=False)
     except:
         pendaftaran = None
         favorit = None
+        pesan = None
 
-    navmenu = {'pendaftaran': pendaftaran, 'favorit': favorit}
+
+    navmenu = {'pendaftaran': pendaftaran, 'favorit': favorit, 'pesan': pesan}
     return navmenu
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -545,18 +548,23 @@ def daftarmateri(request, sid):
 
     materi = Materi.objects.get(id=sid)
     price = materi.harga
+    discount = materi.discount
+    bayar = (price * (100 - discount)) / 100
+    rndm = random.randint(0,100)
+    byr_rnd = bayar + rndm
+
 
     if request.method == "POST":
-        if price == 0:
+        if bayar == 0:
             pendaftaran = Pendaftaran.daftar(request.user, sid)
             pendaftaran.save()
             return redirect('materi',sid)
         else:
-            pembayaran = Pembayaran.daftar(request.user, sid, price)
+            pembayaran = Pembayaran.daftar(request.user, sid, byr_rnd)
             pembayaran.save()
             return redirect('home')
 
-    context={'materi': materi, 'price': price}
+    context={'materi': materi, 'price': price, 'discount': discount, 'bayar': bayar, 'rndm': rndm, 'byr_rnd': byr_rnd}
     context = {**context, **navmenu}
 
     return render(request, 'edukasi/daftarmateri.html', context)
@@ -642,10 +650,13 @@ def tugas(request,sid, topic_asal=None):
     if request.method == "POST":
         soal = request.POST.get('id_idsoal')
         
-
+    #if returned dan tampilkan info
+    info = request.GET.get('info')
     
+    jawaban = Jawaban.objects.filter(user=request.user, topic=topic_content.id, tugas=tugas.id)
+
     context={'tugas': tugas, 'topic_content': topic_content, 'materi': materi, 'soal': soal, 
-        'topics': topics, 'prevpage': prevpage, 'topic_asal': topic_asal}
+        'topics': topics, 'prevpage': prevpage, 'topic_asal': topic_asal, 'info': info, 'jawaban': jawaban}
     context = {**context, **navmenu}
 
     return render(request, 'edukasi/tugas.html', context)
@@ -668,13 +679,15 @@ def periksa(request,sid, topic_asal=None):
                 jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
                 jawaban.save()
 
-                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                info = "Jawaban anda benar. " + str(soal.penjelasan)
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
             else:
                 jawab_ = request.POST.get("id_select")
                 jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 10, False)
                 jawaban.save()
-                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                info = "Jawaban anda salah. "+ str(soal.penjelasan)
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
 
         if soal.tipe == "Kumpul URL":
@@ -685,8 +698,8 @@ def periksa(request,sid, topic_asal=None):
             message = Message.create_msg(request.user, "admin", "Kumpul URL to be checked", False)
             message.save()
 
-
-            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+            info = "Postingan tugas anda telah berhasil, admin telah di notifikasi"
+            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
             return HttpResponseRedirect(url)
             
         if soal.tipe == "Essay":
@@ -697,7 +710,8 @@ def periksa(request,sid, topic_asal=None):
             message = Message.create_msg(request.user, "admin", "Essay to be checked", False)
             message.save()
 
-            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+            info = "Postingan tugas anda telah berhasil, admin telah di notifikasi"
+            url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
             return HttpResponseRedirect(url)
 
         if soal.tipe == "Pilihan Ganda":
@@ -705,16 +719,54 @@ def periksa(request,sid, topic_asal=None):
                 jawab_ = request.POST.get("id_select")
                 jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
                 jawaban.save()
-                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                info = "Jawaban anda benar. " + str(soal.penjelasan)
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
             else:
                 jawab_ = request.POST.get("id_select")
                 jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, False)
                 jawaban.save()
-                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
+                info = "Jawaban anda salah. " + str(soal.penjelasan)
+                url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
-
-    
     
     url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
     return HttpResponseRedirect(url)
+
+def listjawaban(request):
+    navmenu = get_user_menu(request)
+    listjawaban = Jawaban.objects.all().order_by('-check')
+
+    context = {'listjawaban': listjawaban}
+    context = {**context, **navmenu}
+
+    return render(request, 'edukasi/listjawaban.html', context)
+
+def editjawaban(request,sid):
+    navmenu = get_user_menu(request)
+    instance = Jawaban.objects.get(id=sid)
+    jawabanForm = JawabanForm(instance=instance)
+    if request.method == "POST":
+        jawabanForm = JawabanForm(request.POST, instance=instance)
+        if jawabanForm.is_valid():
+            jawabanForm.save()
+
+            pesan = f"Tugas <<{instance.tugas}-{instance.soal}>> anda telah di nilai."
+            message = Message.create_msg("admin", instance.user , pesan , False)
+            message.save()
+
+
+            return redirect('listjawaban')
+
+
+
+    context = {'listjawaban': listjawaban, 'jawabanForm': jawabanForm}
+    context = {**context, **navmenu}
+
+    return render(request, 'edukasi/editjawaban.html', context)
+
+def readall(request):
+    pesan = Message.objects.filter(receiver=request.user, readed=False)
+    pesan.update(readed=True)
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

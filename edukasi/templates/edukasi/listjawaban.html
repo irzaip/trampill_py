@@ -1,0 +1,53 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+<div class="container-md" style="margin-top: 20px;">
+    <h2>List Soal</h2>
+
+    <div class="col-xs-1"></div>
+    <div class="col-xs-3">
+<table class="table-sm table-condensed table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Ujian</th>
+            <th>no_urut</th>
+            <th>Judul</th>
+            <th>Pertanyaan</th>
+            <th>Check</th>
+            <th>Jawaban</th>
+            <th>Nilai</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in listjawaban %}
+        <tr>
+            <td>{{ i.id }}</td>
+            <td>{{ i.user }}</td>
+            <td>{{ i.topic }}</td>
+            <td>{{ i.tugas }}</td>
+            <td>{{ i.soal }}</td>
+            <td>{{ i.check }}</td>
+            <td>{{ i.jawaban }}</td>
+            <td>{{ i.nilai }}</td>
+            <td>
+                {% if i.check %}
+                <a class="btn btn-info" href="{% url 'editjawaban' i.id %}">Edit</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+
+</div>
+      
+{% endblock %}

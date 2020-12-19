@@ -24,7 +24,7 @@
           <img src="images/{{ i.gambar}}" class="mr-3" alt="Thumbnail" width="200" height="200" >
           <div class="media-body">
             <h5 class="mt-0 mb-1">{{ i.judul }}</h5>
-            <p>{{ i.summary }}</p>
+            <p>{{ i.deskripsi | safe }}</p>
             <a class="btn btn-primary" href="/materi/{{ i.id }}">Lihat Materi</a>
             <a class="btn btn-warning" href="{% url 'favorit' i.id %}"><i class="fas fa-heart"></i></a>
           </div>

@@ -60,17 +60,32 @@
             <a class="dropdown-item" href="{% url 'listmateri' %}">List Materi</a>
             <a class="dropdown-item" href="{% url 'add_materi' %}">Tambah Materi Baru</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'listtugas' %}">Daftar Tugas</a>
-            <a class="dropdown-item" href="{% url 'listsoal' %}">Daftar Soal</a>
+            <a class="dropdown-item" href="{% url 'listtugas' %}">List Tugas</a>
+            <a class="dropdown-item" href="{% url 'listsoal' %}">List Soal</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'listdiskusi' %}">Daftar Diskusi</a>
-            <a class="dropdown-item" href="{% url 'listpembayaran' %}">Daftar Pembayaran</a>              
-
+            <a class="dropdown-item" href="{% url 'listdiskusi' %}">List Diskusi</a>
+            <a class="dropdown-item" href="{% url 'listpembayaran' %}">List Pembayaran</a>       
+            <a class="dropdown-item" href="{% url 'listjawaban' %}">List Jawaban</a>              
+            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/admin/">Admin</a>
           </div>
         </li>
         {% endif %}
 
+        {% if request.user.is_authenticated  %}    
+        {% if pesan %}    
+        <li class="nav-item dropdown">
+          <button class="btn btn-danger dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ pesan.count }}</button>
+          <div class="dropdown-menu" aria-labelledby="navDropdown">
+            {% for p in pesan %}
+            <a href="#" class="dropdown-item"><strong>{{ p.sender }}</strong>: {{ p.msg_content }}</a>
+            {% endfor %}
+            <div class="dropdown-divider"></div>
+            <a href="/readall/" class="dropdown-item">Tandai telah semua dibaca</a>
+          </div>
+        </li>
+        {% endif %}
+        {% endif %}
 
       </ul>
 

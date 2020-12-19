@@ -1,4 +1,5 @@
 {% extends 'edukasi/main.html' %}
+{% load humanize %}
 
 {% block content %}
 
@@ -6,19 +7,75 @@
   <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-6">
-      <h2>Mendaftar Materi</h2>
+      
       <div>
-        <p>Akan mendaftar materi {{ materi.judul }}</p>
-        <p>harga: {{ price }}</p>
+        <h3>Mendaftar materi: {{ materi.judul }}</h3>
+
+
+        <p>{{ materi.pendek | safe }}</p>
+
+        <p>Pengajar: <strong>{{ materi.pengajar }}</strong></p>
+        <p>{{ materi.tentang_pengajar | safe }}</p>
+        
+        <div class="card bg-warning" style="margin-top: 20px;">
+          <div class="card-body">
+            {% if price > 0 and discount > 0 and bayar == 0 %}
+            <h5><strike>Harga asli: Rp.{{ price | floatformat:0 | intcomma }}</strike></h5>
+            <h5>Discount: {{ discount }}%</h5>
+            <h4 class="text-danger">Anda bayar: Gratis!</h4>
+            {% endif %}
+
+            {% if price > 0 and discount > 0 and bayar > 0 %}
+            <h5><strike>Harga asli: Rp.{{ price | intcomma }}</strike></h5>
+            <h5>Discount: {{ discount }}%</h5>
+            <h4 class="text-danger">Anda bayar: Rp.{{ bayar | floatformat:0 | intcomma }}</h4>
+            {% endif %}
+
+            {% if price > 0 and discount == 0 %}
+            <h4 class="text-danger">Harga: Rp.{{ price | floatformat:0 | intcomma }}</h4>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if bayar > 0 %}
+        <div class="card bg-light" style="margin-top: 20px;">
+          <div class="card-body">
+            Untuk kemudahan kami rekonsiliasi tambahkan <strong>{{ rndm }}</strong> ke total yang akan dibayarkan<br>
+            <br>
+            Transfer <strong>tepat</strong> sejumlah <strong>{{ byr_rnd | floatformat:0 | intcomma }}</strong>, ke rekening:<br>
+            <br>Nama : <strong>IRZA IMRANY PULUNGAN</strong><br>
+              No.rekening:
+              <input type="text" value="02992002992" id="myInput" readonly>
+              <a href="#" onclick="myFunction()">Copy</a>
+              <p>Bank Central Asia, KCP Woltermongonsidi.</p>
+          </div>
+        </div>
+        {% endif %}
+
       </div>
-      <form action="" method="post">
-        {% csrf_token %}
-        <button class="btn btn-primary" type="submit">DAFTAR MATERI</button>
-      </form>
+        <form action="" method="post" style="margin-top:20px">
+          {% csrf_token %}
+          <button class="btn btn-primary" type="submit">DAFTAR MATERI</button>
+        </form>
     </div>
     <div class="col-sm-2"></div>
   </div>
 </div>
  
-      
+<script>
+      function myFunction() {
+      /* Get the text field */
+      var copyText = document.getElementById("myInput");
+
+      /* Select the text field */
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+      /* Copy the text inside the text field */
+      document.execCommand("copy");
+
+      /* Alert the copied text */
+      alert("No. rekening talah di copy: " + copyText.value);
+    }
+</script>      
 {% endblock %}

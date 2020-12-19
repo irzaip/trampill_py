@@ -77,3 +77,8 @@ class DiskusiForm(ModelForm):
     class Meta:
         model = Diskusi
         fields = '__all__'
+
+class JawabanForm(ModelForm):
+    class Meta:
+        model = Jawaban
+        fields = '__all__'

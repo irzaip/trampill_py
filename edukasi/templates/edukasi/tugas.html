@@ -17,11 +17,24 @@
                     <div class="card-header" style="background-color: aquamarine;"><h4>{{ tugas.judul }}    <a class="btn btn-info" href="/topic/{{ topic_asal }}">Kembali</a></h4></div>
                     <div class="card-body">
                       <p class="card-text">{{ tugas.deskripsi }}</p>
-                      
                     </div>
+
+                    {% if info %}
+                    <div class="alert alert-primary">{{ info }}</div>
+                    {% endif %}
+
                         {% for i in soal %}
                         <div class="card border-warning mb-3" style="margin:10px">
-                            <div class="card-header">{{ i.judul }} - [ {{ i.tipe }} ]</div>
+                            <div class="card-header">
+                                {{ i.judul }} - [ {{ i.tipe }} ]
+
+                                {% for j in jawaban %}
+                                {% if j.soal.id == i.id %}
+                                <button class="btn btn-sm btn-warning float-right">Nilai: {{ j.nilai }}</button>
+                                {% endif %}
+                                {% endfor %}
+
+                            </div>
                             <div class="card-body">
                                 <h5 class="card-title">{{i.pertanyaan}}</h5>
                                 

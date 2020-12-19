@@ -44,4 +44,7 @@ urlpatterns = [
     path('tolakpembayaran/<str:sid>/', views.tolakpembayaran, name='tolakpembayaran'),
     path('tugas/<str:sid>/', views.tugas, name='tugas'),
     path('periksa/<str:sid>/', views.periksa, name='periksa'),
+    path('listjawaban/', views.listjawaban, name='listjawaban'),
+    path('editjawaban/<str:sid>/', views.editjawaban, name='editjawaban'),
+    path('readall/', views.readall, name='readall'),
 ]
