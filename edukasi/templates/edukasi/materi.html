@@ -4,15 +4,16 @@
 {% block content %}
 
    <div class="container" style="margin-top: 20px;">
-    <div class="row">
-      <div class="col-1"></div>
-      <div class="col-10">
+    <div class="row auto-mx">
+      <div class="col-sm-1 col-md-2"></div>
+      <div class="col-sm-10 col-md-8">
         <div class="card text-center">
           <div class="card-header">
             {{ materi.kategori }}
           </div>
           <div class="card-body">
             <h2 class="card-title">{{ materi.judul }}</h2>
+            <button class="text-white btn btn-sm btn-info">rating: {{ materi.rating }}</button>
             <p class="card-text">{{ materi.deskripsi | safe }}</p>
             
             <div class="row-mx-auto">
@@ -20,31 +21,34 @@
             <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
             </div>
 
-            <div class="row mx-auto" style="margin-top: 20px;">
-              <div class="col-2"></div>
-              <div class="col-8">
+                <hr>
+                  Pengajar : 
+                  <strong>{{ materi.pengajar }}</strong><hr>
+                  Tentang pengajar: 
+                  {{ materi.tentang_pengajar | safe }}<br>
+
                 <hr>
                 <h3>Konten Materi</h3>
-                <ul class="nav nav-pills flex-column">
-                  {% for i in topics %}
-                      <li class="nav-item border">
-                          {% if i.id == sid %}
-                              <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
-                          {% else %}
-                              <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
-                          {% endif %}
-                      </li>
-                  {% endfor %}
-                  </ul>
+
+                  <ul class="nav flex-column nav-pills">
+                    {% for i in topics %}
+                        <li class="nav-text border">
+                            {% if i.id == sid %}
+                                <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                            {% else %}
+                                <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
                   <hr>
+
                   <div class="row-mx-auto" style="margin-top: 30px;">
                     <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
                     <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
                   </div>
                           
-              </div>
-              <div class="col-2"></div>
-            </div>
+
       
             
           </div>
@@ -55,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="col-1"></div>
+      <div class="col-sm=1 col-md-2"></div>
 
     </div>
    </div>

@@ -148,7 +148,7 @@ def logoutPage(request):
 def homePage(request):
     navmenu = get_user_menu(request)
 
-    materis = Materi.objects.all()
+    materis = Materi.objects.all()[:4]
     context = {'materis': materis}
     context = {**context, **navmenu}
     return render(request, 'edukasi/home.html', context)

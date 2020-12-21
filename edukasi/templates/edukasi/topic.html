@@ -3,10 +3,8 @@
 {% block content %}
    <div class="container-fluid" style="margin-top: 20px;">
     <div class="row">
-      <div class="col-md-1"></div>
-        <div class="col-md-10">
-            <div class="row">
-                <div class="col-8">
+      <div class="col-sm-1 col-md-1"></div>
+      <div class="col-sm-10 col-md-7">
                     <h3>{{ materi.judul }}</h3>
                     <h4>{{ topic_content.judul}}</h4>
 
@@ -98,24 +96,23 @@
 
                         </div>
                     </div>
-                </div>
+            
             </div>
-                <div class="col-4">
-                    <ul class="nav nav-pills flex-column">
-                    {% for i in topics %}
-                        <li class="nav-item border">
-                            {% if i.id == sid %}
-                                <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
-                            {% else %}
-                                <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-      <div class="col-md-1"></div>
+      </div>
+      <div class="col-sm-1 col-md-3">
+            <ul class="nav nav-pills flex-column">
+            {% for i in topics %}
+                <li class="nav-item border">
+                    {% if i.id == sid %}
+                        <a class="nav-link active" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                    {% else %}
+                        <a class="nav-link {% if i.id in completed %}text-success{% endif %}" href="/topic/{{ i.id }}">{{ i.judul}}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+      </div>
+      <div class="col-sm-1 col-md-1"></div>
     </div>
 
 
