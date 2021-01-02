@@ -15,8 +15,15 @@
         <p>{{ materi.pendek | safe }}</p>
 
         <p>Pengajar: <strong>{{ materi.pengajar }}</strong></p>
+        {% if materi.tentang_pengajar %}
         <p>{{ materi.tentang_pengajar | safe }}</p>
-        
+        {% endif %}
+
+        {% if materi.playlist %}
+        <div><p class="text-info">Type: Playlist</p></div>
+        {% endif %}
+
+        {% if not materi.playlist %}
         <div class="card bg-warning" style="margin-top: 20px;">
           <div class="card-body">
             {% if price > 0 and discount > 0 and bayar == 0 %}
@@ -36,6 +43,7 @@
             {% endif %}
           </div>
         </div>
+        {% endif %}
 
         {% if bayar > 0 %}
         <div class="card bg-light" style="margin-top: 20px;">

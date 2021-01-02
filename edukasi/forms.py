@@ -5,6 +5,7 @@ from .models import *
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from ckeditor.fields import RichTextField
 
 
 
@@ -82,3 +83,63 @@ class JawabanForm(ModelForm):
     class Meta:
         model = Jawaban
         fields = '__all__'
+
+class YtbForms(forms.Form):
+    api_key = forms.CharField(
+        label = 'api_key',
+        max_length = 300,
+        required = True,
+    )
+    ytb_playlist_url = forms.CharField(
+        label = 'Youtube Playlist',
+        max_length = 300,
+        required = True,
+        help_text = 'Isi dengan url yang ada parameter <list>'
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-ytbForm'
+        self.helper.form_class = 'YTBForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'submit_survey'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class PlaylistForms(forms.Form):
+    KATEGORI = (
+        ('Teknologi', 'Teknologi'),
+        ('Bisnis', 'Bisnis'),
+        ('Pengembangan Diri', 'Pengembangan Diri'),
+        ('Batch Khusus', 'Batch Khusus'),
+        ('Koding Playlist', 'Koding Playlist'),
+        ('Projects', 'Projects'),
+    )
+    RATING = (
+        ('dasar','dasar'),
+        ('menengah', 'menengah'),
+        ('mahir','mahir'),
+    )
+
+    judul = forms.CharField(max_length=200)
+        
+    kode = forms.CharField(max_length=20,)
+    pendek = forms.CharField(max_length=300,)
+    deskripsi = RichTextField()
+    pengajar = forms.CharField(max_length=40)
+    tentang_pengajar = RichTextField()
+    hidden = forms.BooleanField()
+    playlist = forms.BooleanField()
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-PlyForm'
+        self.helper.form_class = 'PLYForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'submit_survey'
+
+        self.helper.add_input(Submit('submit', 'Submit'))

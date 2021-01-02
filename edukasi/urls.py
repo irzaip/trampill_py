@@ -47,4 +47,6 @@ urlpatterns = [
     path('listjawaban/', views.listjawaban, name='listjawaban'),
     path('editjawaban/<str:sid>/', views.editjawaban, name='editjawaban'),
     path('readall/', views.readall, name='readall'),
+    path('ytb_playlist/', views.ytb_playlist, name='ytb_playlist'),
+    path('ytb_playlist_confirm/', views.ytb_playlist_confirm, name='ytb_playlist_confirm'),
 ]

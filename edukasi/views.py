@@ -21,6 +21,9 @@ from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
 import random
+import ast 
+
+from .youtube import *
 
 
 def get_user_menu(request):
@@ -149,7 +152,10 @@ def homePage(request):
     navmenu = get_user_menu(request)
 
     materis = Materi.objects.all()[:4]
-    context = {'materis': materis}
+
+    playlist = Materi.objects.filter(playlist=True)
+
+    context = {'materis': materis, 'playlist': playlist}
     context = {**context, **navmenu}
     return render(request, 'edukasi/home.html', context)
 
@@ -755,7 +761,6 @@ def editjawaban(request,sid):
             message = Message.create_msg("admin", instance.user , pesan , False)
             message.save()
 
-
             return redirect('listjawaban')
 
 
@@ -770,3 +775,61 @@ def readall(request):
     pesan.update(readed=True)
 
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+def ytb_playlist(request):
+    navmenu = get_user_menu(request)
+    playlist = YtbForms()
+
+    if request.method == "POST":
+        materi = PlaylistForms()
+        result = get_content(request.POST.get('ytb_playlist_url'), request.POST.get('api_key'))
+
+        context = {'playlist' : playlist, 'result': result, 'materi': materi}
+        context = {**context, **navmenu}
+        return render(request, 'edukasi/ytb_playlist.html', context)
+    
+    context = {'playlist' : playlist}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/ytb_playlist.html', context)
+
+def ytb_playlist_confirm(request):
+    navmenu = get_user_menu(request)
+
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        if 'ytb_playlist/' not in referer:
+            return redirect('ytb_playlist')
+    else:
+        return redirect('ytb_playlist')
+
+    if request.method == "POST":
+        judul = request.POST.get('judul')
+        kode = request.POST.get('kode')
+        pendek = request.POST.get('pendek')
+        deskripsi = request.POST.get('deskripsi')
+        pengajar = request.POST.get('pengajar')
+        tentang_pengajar = request.POST.get('tentang_pengajar')
+        
+        materi = Materi.objects.create(
+            judul=judul,
+            kode=kode,
+            pendek=pendek,
+            deskripsi=deskripsi,
+            pengajar=pengajar,
+            tentang_pengajar=tentang_pengajar,
+            hidden=True,
+            playlist=True,
+            )
+        
+        result = request.POST.get('result')
+        result = ast.literal_eval(result)
+        mmt = Materi.objects.get(id=materi.pk)
+
+        for k,i in enumerate(result):
+            nn = Topic.objects.create(materi=mmt, no_urut=int(k), judul=str(i[0]), jenis='Link Video', link=str(i[1]), isi_tambahan=str(i[1]))
+            
+        return redirect('materi', materi.pk)
+
+    context = {'playlist' : playlist}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/ytb_playlist_confirm.html', context)

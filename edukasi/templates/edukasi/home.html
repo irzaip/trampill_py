@@ -1,6 +1,4 @@
 {% extends 'edukasi/main.html' %}
-
-
 {% block content %}
 
 <section class="jumbotron text-center">
@@ -16,13 +14,16 @@
  </section>
 
 <div class="container">
-   <h1 style="margin: 20px;"><center>Terbaru</center></h1>
+  <div class="row justify-content-end">
+    <a href="{% url 'listmateri' %}" class="text-right">[Lihat semua materi]</a>
+  </div>
+   <h1 style="margin-bottom: 20px;"><center>Terbaru</center></h1>
   <div class="row justify-content-center">
     {% for i in materis %}
     <div class="col-sm-3">
-        <div class="card border-0 text-center">
+        <div class="card border-0 h-100 text-center">
           <img src="/images/{{ i.gambar }}" alt="" width="140" height="140" class="bd-placeholder-img rounded-circle mx-auto" style="margin-top: 10px;">
-          <div class="card-body">
+          <div class="card-body d-flex flex-column">
             <h5 class="card-title text-center mx-auto" style="margin-top: 10px;">{{ i.judul }}</h5>
             <p class="card-text text-center">{{ i.pendek }}</p>
             <a class="btn btn-secondary mt-auto" href="{% url 'materi' i.id %}" role="button">Lihat materi &raquo;</a>
@@ -33,5 +34,24 @@
   </div>
 </div>
 
+<div class="container">
+  <div class="row justify-content-end">
+    <a href="{% url 'listmateri' %}">[Lihat semua materi]</a>
+  </div>
+    <h2 style="margin-bottom: 20px;"><center>Materi Playlist</center></h2>
+    <div class="row">
+      {% for i in playlist %}
+      <div class="col-sm-3">
+          <div class="card border h-100  bg-light">
+            <div class="card-body">
+              <p class="card-title font-weight-bold"><a href="{% url 'materi' i.id %}">{{ i.judul }}</a></p>
+              <p class="card-text" style="font-size: 0.9em;">{{ i.pendek }}</p>
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+  
+</div>
 
 {% endblock %}
