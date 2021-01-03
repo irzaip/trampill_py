@@ -601,7 +601,7 @@ def favorit(request, sid):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def listpembayaran(request):
     navmenu = get_user_menu(request)
 
@@ -611,9 +611,8 @@ def listpembayaran(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/listpembayaran.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def setujupembayaran(request, sid):
-
     pembayaran = Pembayaran.objects.get(id=sid)
     pembayaran.status = 'disetujui'
     pembayaran.save()
@@ -623,16 +622,15 @@ def setujupembayaran(request, sid):
 
     return redirect('listpembayaran')
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def tolakpembayaran(request, sid):
-
     pembayaran = Pembayaran.objects.get(id=sid)
     pembayaran.status = 'ditolak'
     pembayaran.save()
 
     return redirect('listpembayaran')
 
-
+@login_required(login_url='login')
 def tugas(request, sid, topic_asal=None):
     navmenu = get_user_menu(request)
 
@@ -683,7 +681,7 @@ def tugas(request, sid, topic_asal=None):
 
     return render(request, 'edukasi/tugas.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def periksa(request, sid, topic_asal=None):
 
     if request.method == "POST":
@@ -763,7 +761,7 @@ def periksa(request, sid, topic_asal=None):
     url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
     return HttpResponseRedirect(url)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def listjawaban(request):
     navmenu = get_user_menu(request)
     listjawaban = Jawaban.objects.all().order_by('-check')
@@ -773,7 +771,7 @@ def listjawaban(request):
 
     return render(request, 'edukasi/listjawaban.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def editjawaban(request, sid):
     navmenu = get_user_menu(request)
     instance = Jawaban.objects.get(id=sid)
@@ -794,14 +792,14 @@ def editjawaban(request, sid):
 
     return render(request, 'edukasi/editjawaban.html', context)
 
-
+@login_required(login_url='login')
 def readall(request):
     pesan = Message.objects.filter(receiver=request.user, readed=False)
     pesan.update(readed=True)
 
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def ytb_playlist(request):
     navmenu = get_user_menu(request)
     playlist = YtbForms()
@@ -819,7 +817,7 @@ def ytb_playlist(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/ytb_playlist.html', context)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def ytb_playlist_confirm(request):
     navmenu = get_user_menu(request)
 

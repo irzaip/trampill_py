@@ -60,7 +60,7 @@ class Materi(models.Model):
 
 
     def __str__(self):
-        return self.judul
+        return str(self.id) + "-" + self.judul
 
 class Tugas(models.Model):
     judul = models.CharField(max_length=25)

@@ -53,5 +53,10 @@ urlpatterns = [
     path('example_view/', apiviews.example_view, name='example_view'),
     path('api/topic/<int:pk>/', apiviews.topic_apiview, name='topic_apiview'),
     path('api/materi/<int:pk>/', apiviews.materi_apiview, name='materi_apiview'),
-    
+    path('api/message/', apiviews.message_apiview, name='message_apiview'),
+    path('api/user/<int:pk>/', apiviews.user_apiview, name='user_apiview'),
+    path('api/pendaftaran/', apiviews.pendaftaran_apiview, name='pendaftaran_apiview'),
+    path('api/mendaftar/<int:pk>/', apiviews.mendaftar_apiview, name='mendaftar_apiview'),
+    path('api/favorit/', apiviews.favorit_apiview, name='pendaftaran_apiview'),
+    path('api/pembayaran/', apiviews.pembayaran_apiview, name='pembayaran_apiview'),
 ]

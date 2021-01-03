@@ -23,3 +23,30 @@ class TopicSerializer(serializers.ModelSerializer):
         model = Topic
         fields = ['materi', 'no_urut', 'judul', 'jenis', 'link', 'isi_tambahan', 'tugas']
 
+class MessageSerializer(serializers.HyperlinkedModelSerializer):
+    sender = serializers.ReadOnlyField(source='sender.username')
+    receiver = serializers.ReadOnlyField(source='receiver.username')
+    class Meta:
+        model = Message
+        fields = ['sender', 'receiver', 'msg_content', 'created_at']
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'groups']
+
+class PendaftaranSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pendaftaran
+        fields = ['user', 'materi']
+
+class FavoritSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorit
+        fields = ['user', 'materi']
+
+class PembayaranSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pembayaran
+        fields = ['no_order', 'harga','materi', 'status']
+        depth = 1

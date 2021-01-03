@@ -73,6 +73,11 @@ def example_view(request, format=None):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def topic_apiview(request, pk, format=None):
+
+    check = Pendaftaran.objects.filter(user=request.user, materi=pk)
+    if not check:
+        return Response({'status': 'Belum terdaftar'})
+
     try:
         queryset = Topic.objects.filter(materi=pk).order_by('no_urut')
     except:
@@ -90,4 +95,76 @@ def materi_apiview(request, pk, format=None):
         return Response({'status': 'Data not exist'})
 
     serial = MateriSerializer(queryset, many=False)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def message_apiview(request, format=None):
+    queryset = Message.objects.filter(receiver=request.user, readed=False)
+    serial = MessageSerializer(queryset, many=True, context={'request': request})
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_apiview(request, pk):
+    try:
+        queryset = User.objects.get(id=pk)
+    except:
+        return Response({'status': 'User error'})
+    
+    serial = UserDetailSerializer(queryset, many=False)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def pendaftaran_apiview(request):
+    queryset = Pendaftaran.objects.filter(user=request.user)
+    
+    serial = PendaftaranSerializer(queryset, many=True)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def favorit_apiview(request):
+    queryset = Favorit.objects.filter(user=request.user)
+    
+    serial = FavoritSerializer(queryset, many=True)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def pembayaran_apiview(request):
+    queryset = Pembayaran.objects.filter(user=request.user)
+    
+    serial = PembayaranSerializer(queryset, many=True)
+    return Response(serial.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def mendaftar_apiview(request, pk):
+    check = Pendaftaran.objects.filter(user=request.user, materi=pk)
+    if not check:
+        try:
+            checkmateri = Materi.objects.get(id=pk)
+        except:
+            return Response({'status': 'Materi tidak ditemukan'})        
+            
+        if (int(checkmateri.harga) - (int(checkmateri.harga) * int(checkmateri.discount) / 100) > 0):
+            return Response({'status': 'Harus melakukan pembayaran terlebih dahulu'})
+        else:
+
+            daftar = Pendaftaran.objects.create(materi=checkmateri, user=request.user)
+            
+
+    queryset = Pendaftaran.objects.filter(user=request.user)
+    
+    serial = PendaftaranSerializer(queryset, many=True)
+    return Response(serial.data)
+
+    
+
+
+    
+    serial = PendaftaranSerializer(queryset, many=True)
     return Response(serial.data)
