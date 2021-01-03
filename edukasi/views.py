@@ -1,5 +1,10 @@
+from .models import *
+from .mylib import *
+from .decorators import *
+from .filter import *
+from .forms import *
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.forms import inlineformset_factory
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -8,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
-from edukasi.serializers import UserSerializer, GroupSerializer
+from edukasi.serializers import *
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -21,9 +26,13 @@ from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
 import random
-import ast 
+import ast
 
 from .youtube import *
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 
 def get_user_menu(request):
@@ -36,32 +45,10 @@ def get_user_menu(request):
         favorit = None
         pesan = None
 
-
     navmenu = {'pendaftaran': pendaftaran, 'favorit': favorit, 'pesan': pesan}
     return navmenu
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-from .models import *
-from .forms import *
-from .filter import *
-from .decorators import *
-from .mylib import *
 
 
 # Create your views here.
@@ -75,7 +62,8 @@ def registerPage(request):
             user.save()
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
-            fullname = str(form.cleaned_data.get('first_name')) + str(form.cleaned_data.get('lastname'))
+            fullname = str(form.cleaned_data.get('first_name')) + \
+                str(form.cleaned_data.get('lastname'))
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
@@ -89,17 +77,17 @@ def registerPage(request):
             message = render_to_string('edukasi/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':account_activation_token.make_token(user),
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
             })
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
-                        mail_subject, message, to=[to_email]
+                mail_subject, message, to=[to_email]
             )
             email.send()
 
-
-            int_messages.success(request,"Account created successfully, FIRST verify your EMAIL")
+            int_messages.success(
+                request, "Account created successfully, FIRST verify your EMAIL")
             return redirect('please_verify')
         else:
             return HttpResponse("Error creating new user -> check user and password requirements")
@@ -137,11 +125,12 @@ def loginPage(request):
             return redirect('home')
 
         else:
-            int_messages.error(request,'Username or Password INCORRECT!')
+            int_messages.error(request, 'Username or Password INCORRECT!')
             return redirect('login')
-    
+
     context = {}
     return render(request, 'edukasi/login.html', context)
+
 
 def logoutPage(request):
     logout(request)
@@ -163,13 +152,14 @@ def homePage(request):
 def listmateri(request):
     navmenu = get_user_menu(request)
     materis = Materi.objects.all()
-    
+
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
+
 
 def materi(request, sid):
     navmenu = get_user_menu(request)
@@ -183,9 +173,11 @@ def materi(request, sid):
 
     topics = Topic.objects.filter(materi=materi.id)
 
-    context = {'materi': materi, 'starttopic': starttopic, 'tags': tags, 'topics': topics}
+    context = {'materi': materi, 'starttopic': starttopic,
+               'tags': tags, 'topics': topics}
     context = {**context, **navmenu}
     return render(request, 'edukasi/materi.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def edittopic(request):
@@ -193,6 +185,7 @@ def edittopic(request):
     context = {}
     context = {**context, **navmenu}
     return render(request, 'edukasi/edittopic.html', context)
+
 
 @login_required(login_url='login')
 def topic(request, sid):
@@ -207,13 +200,13 @@ def topic(request, sid):
     materi = Materi.objects.get(id=topic_content.materi.id)
     pendaftaran = Pendaftaran.objects.filter(user=request.user)
     materi_terdaftar = [p.materi.id for p in pendaftaran]
-    
+
     if materi.id not in materi_terdaftar:
         return redirect('daftarmateri', materi.id)
 
     topics = Topic.objects.filter(materi=materi.id).order_by("no_urut")
 
-    #HITUNG TOPIC SEBELUM DAN SESUDAH
+    # HITUNG TOPIC SEBELUM DAN SESUDAH
     sequence_topics = [i.id for i in topics]
     sidindex = sequence_topics.index(sid)
     if sidindex == 0 and len(sequence_topics) == 1:
@@ -234,12 +227,12 @@ def topic(request, sid):
     else:
         ytb_video = ""
 
-    #menarik topic apa saja yang sudah pernah dibuka.
+    # menarik topic apa saja yang sudah pernah dibuka.
     completed = Komplit.objects.filter(user=request.user).order_by('topic')
     if completed:
         completed = [i.topic.id for i in completed]
 
-    # mengisi tabel komplit dengan topic yang sudah pernah di buka        
+    # mengisi tabel komplit dengan topic yang sudah pernah di buka
     topic_komplit = Komplit.objects.filter(topic=sid, user=request.user)
     if not topic_komplit:
         tsid = Topic.objects.get(id=sid)
@@ -264,17 +257,17 @@ def topic(request, sid):
         if diskusi.is_valid():
             diskusi.save()
             return redirect('topic', sid)
-    
+
     else:
-        diskusiForm=DiskusiForm()
-    
+        diskusiForm = DiskusiForm()
 
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
-        'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
-        'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar, 'tugas': tugas
-        }
+               'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
+               'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar, 'tugas': tugas
+               }
     context = {**context, **navmenu}
     return render(request, 'edukasi/topic.html', context)
+
 
 def kontribusi(request):
     navmenu = get_user_menu(request)
@@ -282,23 +275,27 @@ def kontribusi(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/kontribusi.html', context)
 
+
 def faq(request):
     navmenu = get_user_menu(request)
     context = {}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/faq.html',context)
-    
+    return render(request, 'edukasi/faq.html', context)
+
+
 def feature(request):
     navmenu = get_user_menu(request)
     context = {}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/feature.html',context)
+    return render(request, 'edukasi/feature.html', context)
+
 
 def please_verify(request):
     navmenu = get_user_menu(request)
     context = {}
     context = {**context, **navmenu}
     return render(request, 'edukasi/please_verify.html', context)
+
 
 def messages(request):
     navmenu = get_user_menu(request)
@@ -308,6 +305,7 @@ def messages(request):
     context = {'inbox': inbox, 'sentbox': sentbox}
     context = {**context, **navmenu}
     return render(request, 'edukasi/messages.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def add_materi(request):
@@ -323,12 +321,12 @@ def add_materi(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def add_materi_topic(request, sid):
     navmenu = get_user_menu(request)
     m_topic = Topic.objects.filter(materi=sid).order_by('no_urut')
     form = TopicForm(initial={'materi': sid})
-    
 
     if request.method == "POST":
         form = TopicForm(request.POST)
@@ -337,13 +335,13 @@ def add_materi_topic(request, sid):
             topic = form.save(request.POST)
             return redirect('add_materi_topic', sid)
 
-
     context = {'form': form, 'm_topic': m_topic}
     context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi2.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
-def edit_materi(request,sid):
+def edit_materi(request, sid):
     navmenu = get_user_menu(request)
     instance = Materi.objects.get(id=sid)
     materi = MateriForm(instance=instance)
@@ -359,8 +357,9 @@ def edit_materi(request,sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/add_materi.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
-def edittopic(request,sid):
+def edittopic(request, sid):
     navmenu = get_user_menu(request)
     instance = Topic.objects.get(id=sid)
     topic = TopicForm(instance=instance)
@@ -374,6 +373,7 @@ def edittopic(request,sid):
     context = {'topic': topic}
     context = {**context, **navmenu}
     return render(request, 'edukasi/edittopic.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def deltopic(request, sid):
@@ -393,22 +393,22 @@ def deltopic(request, sid):
     return render(request, 'edukasi/deltopic.html', context)
 
 
-
 @user_passes_test(lambda u: u.is_superuser)
 def listtugas(request):
     navmenu = get_user_menu(request)
     listtugas = Tugas.objects.all()
-    
+
     context = {'listtugas': listtugas}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listtugas.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def addtugas(request):
     navmenu = get_user_menu(request)
     tugas = TugasForm()
 
-    if request.method=="POST":
+    if request.method == "POST":
         tugas = TugasForm(request.POST)
         if tugas.is_valid():
             tugas.save()
@@ -418,13 +418,14 @@ def addtugas(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/addtugas.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
-def edittugas(request,sid):
+def edittugas(request, sid):
     navmenu = get_user_menu(request)
     instance = Tugas.objects.get(id=sid)
     tugasform = TugasForm(instance=instance)
     if request.method == "POST":
-        tugasform = TugasForm(request.POST,instance=instance)
+        tugasform = TugasForm(request.POST, instance=instance)
         if tugasform.is_valid():
             tugasform.save()
 
@@ -432,12 +433,13 @@ def edittugas(request,sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/edittugas.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def deletetugas(request, sid):
     navmenu = get_user_menu(request)
     instance = Tugas.objects.get(id=sid)
     tugasform = TugasForm(instance=instance)
-    if request.method=="POST":
+    if request.method == "POST":
         tugasform = TugasForm(request.POST, instance=instance)
         instance.delete()
         return redirect('listtugas')
@@ -446,14 +448,16 @@ def deletetugas(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/deletetugas.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def listsoal(request):
     navmenu = get_user_menu(request)
     listsoal = Soal.objects.all()
-    
+
     context = {'listsoal': listsoal}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listsoal.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def addsoal(request, sid):
@@ -463,7 +467,7 @@ def addsoal(request, sid):
 
     all_soal = Soal.objects.filter(tugas=sid)
 
-    if request.method=="POST":
+    if request.method == "POST":
         soal = SoalForm(request.POST, initial={'tugas': instance.id})
         if soal.is_valid():
             soal.save()
@@ -473,14 +477,15 @@ def addsoal(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/addsoal.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
-def editsoal(request,sid):
+def editsoal(request, sid):
     navmenu = get_user_menu(request)
     instance = Soal.objects.get(id=sid)
     soalform = SoalForm(instance=instance)
 
     if request.method == "POST":
-        soalform = SoalForm(request.POST,instance=instance)
+        soalform = SoalForm(request.POST, instance=instance)
         if soalform.is_valid():
             soalform.save()
             return redirect('addsoal', instance.tugas.id)
@@ -489,12 +494,13 @@ def editsoal(request,sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/editsoal.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def deletesoal(request, sid):
     navmenu = get_user_menu(request)
     instance = Soal.objects.get(id=sid)
     soalform = SoalForm(instance=instance)
-    if request.method=="POST":
+    if request.method == "POST":
         soalform = SoalForm(request.POST, instance=instance)
         instance.delete()
         return redirect('listsoal')
@@ -503,11 +509,13 @@ def deletesoal(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/deletesoal.html', context)
 
+
 def materisaya(request):
     navmenu = get_user_menu(request)
     context = {}
     context = {**context, **navmenu}
     return render(request, 'edukasi/materisaya.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def listdiskusi(request):
@@ -516,6 +524,7 @@ def listdiskusi(request):
     context = {'listdiskusi': listdiskusi}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listdiskusi.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def editdiskusi(request, sid):
@@ -533,6 +542,7 @@ def editdiskusi(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/editdiskusi.html', context)
 
+
 @user_passes_test(lambda u: u.is_superuser)
 def deletediskusi(request, sid):
     navmenu = get_user_menu(request)
@@ -548,6 +558,7 @@ def deletediskusi(request, sid):
     context = {**context, **navmenu}
     return render(request, 'edukasi/deletediskusi.html', context)
 
+
 @login_required(login_url='login')
 def daftarmateri(request, sid):
     navmenu = get_user_menu(request)
@@ -556,31 +567,32 @@ def daftarmateri(request, sid):
     price = materi.harga
     discount = materi.discount
     bayar = (price * (100 - discount)) / 100
-    rndm = random.randint(0,100)
+    rndm = random.randint(0, 100)
     byr_rnd = bayar + rndm
-
 
     if request.method == "POST":
         if bayar == 0:
             pendaftaran = Pendaftaran.daftar(request.user, sid)
             pendaftaran.save()
-            return redirect('materi',sid)
+            return redirect('materi', sid)
         else:
             pembayaran = Pembayaran.daftar(request.user, sid, byr_rnd)
             pembayaran.save()
             return redirect('home')
 
-    context={'materi': materi, 'price': price, 'discount': discount, 'bayar': bayar, 'rndm': rndm, 'byr_rnd': byr_rnd}
+    context = {'materi': materi, 'price': price, 'discount': discount,
+               'bayar': bayar, 'rndm': rndm, 'byr_rnd': byr_rnd}
     context = {**context, **navmenu}
 
     return render(request, 'edukasi/daftarmateri.html', context)
+
 
 @login_required(login_url='login')
 def favorit(request, sid):
     user = User.objects.get(username=request.user)
     materi = Materi.objects.get(id=sid)
     check_fav = Favorit.objects.filter(user=user, materi=materi)
-    
+
     if not check_fav:
         favorit = Favorit(user=user, materi=materi)
         favorit.save()
@@ -595,11 +607,12 @@ def listpembayaran(request):
 
     listpembayaran = Pembayaran.objects.all().order_by('-date_created')
 
-    context={'listpembayaran': listpembayaran}
+    context = {'listpembayaran': listpembayaran}
     context = {**context, **navmenu}
-    return render(request, 'edukasi/listpembayaran.html', context)    
+    return render(request, 'edukasi/listpembayaran.html', context)
 
-def setujupembayaran(request,sid):
+
+def setujupembayaran(request, sid):
 
     pembayaran = Pembayaran.objects.get(id=sid)
     pembayaran.status = 'disetujui'
@@ -610,7 +623,8 @@ def setujupembayaran(request,sid):
 
     return redirect('listpembayaran')
 
-def tolakpembayaran(request,sid):
+
+def tolakpembayaran(request, sid):
 
     pembayaran = Pembayaran.objects.get(id=sid)
     pembayaran.status = 'ditolak'
@@ -618,7 +632,8 @@ def tolakpembayaran(request,sid):
 
     return redirect('listpembayaran')
 
-def tugas(request,sid, topic_asal=None):
+
+def tugas(request, sid, topic_asal=None):
     navmenu = get_user_menu(request)
 
     tugas = Tugas.objects.get(id=sid)
@@ -631,7 +646,7 @@ def tugas(request,sid, topic_asal=None):
 
     topics = Topic.objects.filter(materi=materi.id).order_by("no_urut")
 
-    #HITUNG TOPIC SEBELUM DAN SESUDAH
+    # HITUNG TOPIC SEBELUM DAN SESUDAH
     sequence_topics = [i.id for i in topics]
     sidindex = sequence_topics.index(topic_content.id)
     if sidindex == 0 and len(sequence_topics) == 1:
@@ -652,25 +667,26 @@ def tugas(request,sid, topic_asal=None):
 
     if request.method == "GET":
         topic_asal = request.GET.get('topic_asal')
-    
+
     if request.method == "POST":
         soal = request.POST.get('id_idsoal')
-        
-    #if returned dan tampilkan info
-    info = request.GET.get('info')
-    
-    jawaban = Jawaban.objects.filter(user=request.user, topic=topic_content.id, tugas=tugas.id)
 
-    context={'tugas': tugas, 'topic_content': topic_content, 'materi': materi, 'soal': soal, 
-        'topics': topics, 'prevpage': prevpage, 'topic_asal': topic_asal, 'info': info, 'jawaban': jawaban}
+    # if returned dan tampilkan info
+    info = request.GET.get('info')
+
+    jawaban = Jawaban.objects.filter(
+        user=request.user, topic=topic_content.id, tugas=tugas.id)
+
+    context = {'tugas': tugas, 'topic_content': topic_content, 'materi': materi, 'soal': soal,
+               'topics': topics, 'prevpage': prevpage, 'topic_asal': topic_asal, 'info': info, 'jawaban': jawaban}
     context = {**context, **navmenu}
 
     return render(request, 'edukasi/tugas.html', context)
 
 
-def periksa(request,sid, topic_asal=None):
-    
-    if request.method=="POST":
+def periksa(request, sid, topic_asal=None):
+
+    if request.method == "POST":
         idsoal = request.POST.get("id_idsoal")
         soal = Soal.objects.get(id=idsoal)
 
@@ -680,9 +696,10 @@ def periksa(request,sid, topic_asal=None):
 
         if soal.tipe == "Betul / Salah":
             if request.POST.get("id_select") == str(soal.benarsalah):
-                #apabila BENAR
+                # apabila BENAR
                 jawab_ = request.POST.get("id_select")
-                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
+                jawaban = Jawaban.berinilai(
+                    request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
                 jawaban.save()
 
                 info = "Jawaban anda benar. " + str(soal.penjelasan)
@@ -690,30 +707,35 @@ def periksa(request,sid, topic_asal=None):
                 return HttpResponseRedirect(url)
             else:
                 jawab_ = request.POST.get("id_select")
-                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 10, False)
+                jawaban = Jawaban.berinilai(
+                    request.user, topic.id, tugas.id, soal.id, jawab_, 10, False)
                 jawaban.save()
-                info = "Jawaban anda salah. "+ str(soal.penjelasan)
+                info = "Jawaban anda salah. " + str(soal.penjelasan)
                 url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
 
         if soal.tipe == "Kumpul URL":
             jawab_ = request.POST.get("id_jawaban_url")
-            jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
+            jawaban = Jawaban.berinilai(
+                request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
             jawaban.save()
-            #Send message to admin
-            message = Message.create_msg(request.user, "admin", "Kumpul URL to be checked", False)
+            # Send message to admin
+            message = Message.create_msg(
+                request.user, "admin", "Kumpul URL to be checked", False)
             message.save()
 
             info = "Postingan tugas anda telah berhasil, admin telah di notifikasi"
             url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
             return HttpResponseRedirect(url)
-            
+
         if soal.tipe == "Essay":
             jawab_ = request.POST.get("id_jawaban_essay")
-            jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
+            jawaban = Jawaban.berinilai(
+                request.user, topic.id, tugas.id, soal.id, jawab_, 0, True)
             jawaban.save()
-            #Send message to admin
-            message = Message.create_msg(request.user, "admin", "Essay to be checked", False)
+            # Send message to admin
+            message = Message.create_msg(
+                request.user, "admin", "Essay to be checked", False)
             message.save()
 
             info = "Postingan tugas anda telah berhasil, admin telah di notifikasi"
@@ -723,21 +745,24 @@ def periksa(request,sid, topic_asal=None):
         if soal.tipe == "Pilihan Ganda":
             if request.POST.get("id_select") == str(soal.jawaban_1).upper():
                 jawab_ = request.POST.get("id_select")
-                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
+                jawaban = Jawaban.berinilai(
+                    request.user, topic.id, tugas.id, soal.id, jawab_, 100, False)
                 jawaban.save()
                 info = "Jawaban anda benar. " + str(soal.penjelasan)
                 url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
             else:
                 jawab_ = request.POST.get("id_select")
-                jawaban = Jawaban.berinilai(request.user, topic.id, tugas.id, soal.id, jawab_, 0, False)
+                jawaban = Jawaban.berinilai(
+                    request.user, topic.id, tugas.id, soal.id, jawab_, 0, False)
                 jawaban.save()
                 info = "Jawaban anda salah. " + str(soal.penjelasan)
                 url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}&info={info}"
                 return HttpResponseRedirect(url)
-    
+
     url = f"/tugas/{tugas.id}/?topic_asal={topic.id}&materi={materi.id}"
     return HttpResponseRedirect(url)
+
 
 def listjawaban(request):
     navmenu = get_user_menu(request)
@@ -748,7 +773,8 @@ def listjawaban(request):
 
     return render(request, 'edukasi/listjawaban.html', context)
 
-def editjawaban(request,sid):
+
+def editjawaban(request, sid):
     navmenu = get_user_menu(request)
     instance = Jawaban.objects.get(id=sid)
     jawabanForm = JawabanForm(instance=instance)
@@ -758,17 +784,16 @@ def editjawaban(request,sid):
             jawabanForm.save()
 
             pesan = f"Tugas <<{instance.tugas}-{instance.soal}>> anda telah di nilai."
-            message = Message.create_msg("admin", instance.user , pesan , False)
+            message = Message.create_msg("admin", instance.user, pesan, False)
             message.save()
 
             return redirect('listjawaban')
-
-
 
     context = {'listjawaban': listjawaban, 'jawabanForm': jawabanForm}
     context = {**context, **navmenu}
 
     return render(request, 'edukasi/editjawaban.html', context)
+
 
 def readall(request):
     pesan = Message.objects.filter(receiver=request.user, readed=False)
@@ -776,21 +801,24 @@ def readall(request):
 
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
+
 def ytb_playlist(request):
     navmenu = get_user_menu(request)
     playlist = YtbForms()
 
     if request.method == "POST":
         materi = PlaylistForms()
-        result = get_content(request.POST.get('ytb_playlist_url'), request.POST.get('api_key'))
+        result = get_content(request.POST.get(
+            'ytb_playlist_url'), request.POST.get('api_key'))
 
-        context = {'playlist' : playlist, 'result': result, 'materi': materi}
+        context = {'playlist': playlist, 'result': result, 'materi': materi}
         context = {**context, **navmenu}
         return render(request, 'edukasi/ytb_playlist.html', context)
-    
-    context = {'playlist' : playlist}
+
+    context = {'playlist': playlist}
     context = {**context, **navmenu}
     return render(request, 'edukasi/ytb_playlist.html', context)
+
 
 def ytb_playlist_confirm(request):
     navmenu = get_user_menu(request)
@@ -809,7 +837,7 @@ def ytb_playlist_confirm(request):
         deskripsi = request.POST.get('deskripsi')
         pengajar = request.POST.get('pengajar')
         tentang_pengajar = request.POST.get('tentang_pengajar')
-        
+
         materi = Materi.objects.create(
             judul=judul,
             kode=kode,
@@ -819,17 +847,19 @@ def ytb_playlist_confirm(request):
             tentang_pengajar=tentang_pengajar,
             hidden=True,
             playlist=True,
-            )
-        
+        )
+
         result = request.POST.get('result')
         result = ast.literal_eval(result)
         mmt = Materi.objects.get(id=materi.pk)
 
-        for k,i in enumerate(result):
-            nn = Topic.objects.create(materi=mmt, no_urut=int(k), judul=str(i[0]), jenis='Link Video', link=str(i[1]), isi_tambahan=str(i[1]))
-            
+        for k, i in enumerate(result):
+            nn = Topic.objects.create(materi=mmt, no_urut=int(k), judul=str(
+                i[0]), jenis='Link Video', link=str(i[1]), isi_tambahan=str(i[1]))
+
         return redirect('materi', materi.pk)
 
-    context = {'playlist' : playlist}
+    context = {'playlist': playlist}
     context = {**context, **navmenu}
     return render(request, 'edukasi/ytb_playlist_confirm.html', context)
+

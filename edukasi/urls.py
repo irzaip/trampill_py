@@ -3,6 +3,7 @@ from edukasi import views
 
 
 from . import views
+from . import apiviews
  
 
 urlpatterns = [
@@ -49,4 +50,8 @@ urlpatterns = [
     path('readall/', views.readall, name='readall'),
     path('ytb_playlist/', views.ytb_playlist, name='ytb_playlist'),
     path('ytb_playlist_confirm/', views.ytb_playlist_confirm, name='ytb_playlist_confirm'),
+    path('example_view/', apiviews.example_view, name='example_view'),
+    path('api/topic/<int:pk>/', apiviews.topic_apiview, name='topic_apiview'),
+    path('api/materi/<int:pk>/', apiviews.materi_apiview, name='materi_apiview'),
+    
 ]
