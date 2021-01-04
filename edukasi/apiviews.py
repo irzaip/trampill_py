@@ -149,7 +149,7 @@ def mendaftar_apiview(request, pk):
             checkmateri = Materi.objects.get(id=pk)
         except:
             return Response({'status': 'Materi tidak ditemukan'})        
-            
+
         if (int(checkmateri.harga) - (int(checkmateri.harga) * int(checkmateri.discount) / 100) > 0):
             return Response({'status': 'Harus melakukan pembayaran terlebih dahulu'})
         else:
@@ -162,9 +162,20 @@ def mendaftar_apiview(request, pk):
     serial = PendaftaranSerializer(queryset, many=True)
     return Response(serial.data)
 
-    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tugas_apiview(request,pk):
 
-
+    queryset = Tugas.objects.filter(id=pk)
     
-    serial = PendaftaranSerializer(queryset, many=True)
+    serial = TugasSerializer(queryset, many=True)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def soal_apiview(request,pk):
+    
+    queryset = Soal.objects.filter(tugas=pk)
+    
+    serial = SoalSerializer(queryset, many=True)
     return Response(serial.data)

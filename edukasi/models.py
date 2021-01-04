@@ -69,7 +69,7 @@ class Tugas(models.Model):
     nilai_max = models.IntegerField(default=100)
 
     def __str__(self):
-        return self.judul
+        return str(self.id) + "-" + self.judul
 
 class Topic(models.Model):
     JENIS = (

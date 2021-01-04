@@ -59,4 +59,6 @@ urlpatterns = [
     path('api/mendaftar/<int:pk>/', apiviews.mendaftar_apiview, name='mendaftar_apiview'),
     path('api/favorit/', apiviews.favorit_apiview, name='pendaftaran_apiview'),
     path('api/pembayaran/', apiviews.pembayaran_apiview, name='pembayaran_apiview'),
+    path('api/tugas/<int:pk>/', apiviews.tugas_apiview, name='tugas_apiview'),
+    path('api/soal/<int:pk>/', apiviews.soal_apiview, name='soal_apiview'),
 ]

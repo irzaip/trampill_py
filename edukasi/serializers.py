@@ -16,7 +16,25 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class MateriSerializer(serializers.ModelSerializer):
     class Meta:
         model = Materi
-        fields = ['judul', 'deskripsi']
+        fields = [
+            'judul',
+            'kode',
+            'rating',
+            'pendek',
+            'deskripsi',
+            'gambar',
+            'kategori',
+            'copywrite',
+            'harga',
+            'discount',
+            'pengajar',
+            'tentang_pengajar',
+            'hidden',
+            'featured',
+            'frontpage',
+            'playlist',
+        ]
+
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,4 +67,44 @@ class PembayaranSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pembayaran
         fields = ['no_order', 'harga','materi', 'status']
+        depth = 1
+
+class TugasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tugas
+        fields = ['judul', 'kode','deskripsi', 'nilai_max']
+        depth = 1
+
+class SoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Soal
+        fields = [
+          'tugas',
+          'no_urut',
+          'tipe',
+          'judul',
+          'pertanyaan',
+          'penjelasan',
+          'benarsalah',
+          'multianswer',
+          'tags',
+          'jawaban_url',
+          'jawaban_essay',
+          'jawaban_a',
+          'jawaban_b',
+          'jawaban_c',
+          'jawaban_d',
+          'jawaban_e',
+          'jawaban_f',
+          'jawaban_g',
+          'jawaban_h', 
+          'jawaban_1',
+          'jawaban_2',
+          'jawaban_3',
+          'jawaban_4',
+          'jawaban_5',
+          'jawaban_6',
+          'jawaban_7',
+          'jawaban_8',
+        ]
         depth = 1
