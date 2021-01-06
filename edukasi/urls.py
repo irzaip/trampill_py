@@ -53,6 +53,7 @@ urlpatterns = [
     path('example_view/', apiviews.example_view, name='example_view'),
     path('api/topic/<int:pk>/', apiviews.topic_apiview, name='topic_apiview'),
     path('api/materi/<int:pk>/', apiviews.materi_apiview, name='materi_apiview'),
+    path('api/listmateri/', apiviews.listmateri_apiview, name='listmateri_apiview'),
     path('api/message/', apiviews.message_apiview, name='message_apiview'),
     path('api/user/<int:pk>/', apiviews.user_apiview, name='user_apiview'),
     path('api/pendaftaran/', apiviews.pendaftaran_apiview, name='pendaftaran_apiview'),
@@ -61,4 +62,5 @@ urlpatterns = [
     path('api/pembayaran/', apiviews.pembayaran_apiview, name='pembayaran_apiview'),
     path('api/tugas/<int:pk>/', apiviews.tugas_apiview, name='tugas_apiview'),
     path('api/soal/<int:pk>/', apiviews.soal_apiview, name='soal_apiview'),
+
 ]

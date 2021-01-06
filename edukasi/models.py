@@ -47,7 +47,7 @@ class Materi(models.Model):
     deskripsi = RichTextField(null=True, blank=True)
     gambar = models.ImageField(null=True, blank=True)
     kategori = models.CharField(max_length=100, default='Teknologi', choices=KATEGORI)
-    tags = models.ManyToManyField(Tag, null=True, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     copywrite = RichTextField(null=True, blank=True)
     harga = models.IntegerField(default=0)
     discount = models.IntegerField(default=0)

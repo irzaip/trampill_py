@@ -33,6 +33,12 @@ from .youtube import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import generics, permissions
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+
+from .serializers import *
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -51,15 +57,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-
-class MateriViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Materi.objects.all()
-    serializer_class = MateriSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 @api_view(['GET'])
@@ -96,6 +93,18 @@ def materi_apiview(request, pk, format=None):
 
     serial = MateriSerializer(queryset, many=False)
     return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listmateri_apiview(request, format=None):
+    try:
+        queryset = Materi.objects.all()
+    except:
+        return Response({'status': 'Error retrieving'})
+
+    serial = MateriSerializer(queryset, many=True)
+    return Response(serial.data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -160,7 +169,7 @@ def mendaftar_apiview(request, pk):
     queryset = Pendaftaran.objects.filter(user=request.user)
     
     serial = PendaftaranSerializer(queryset, many=True)
-    return Response(serial.data)
+    return Response({'status': 'Berhasil / Telah di daftarkan'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -179,3 +188,4 @@ def soal_apiview(request,pk):
     
     serial = SoalSerializer(queryset, many=True)
     return Response(serial.data)
+
