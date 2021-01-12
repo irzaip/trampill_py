@@ -43,7 +43,7 @@ def _ytb_playlist(api_key, id=""):
 
     client = yt.playlistItems().list(
         part="contentDetails",
-        maxResults = 50,
+        maxResults = 150,
         playlistId=id
     )
     response = client.execute()

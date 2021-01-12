@@ -24,12 +24,11 @@ router = routers.DefaultRouter()
 router.register(r'api/users', apiviews.UserViewSet)
 router.register(r'api/groups', apiviews.GroupViewSet)
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('edukasi.urls')),
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

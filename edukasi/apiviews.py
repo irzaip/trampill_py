@@ -81,6 +81,7 @@ def topic_apiview(request, pk, format=None):
         return Response({'status': 'Data not exist'})
 
     serial = TopicSerializer(queryset, many=True)
+    Logakses.objects.create(user=request.user, materi=Materi.objects.get(id=pk), keterangan="topiclist", api=True)
     return Response(serial.data)
 
 @api_view(['GET'])
@@ -92,6 +93,7 @@ def materi_apiview(request, pk, format=None):
         return Response({'status': 'Data not exist'})
 
     serial = MateriSerializer(queryset, many=False)
+    Logakses.objects.create(user=request.user, materi=queryset, keterangan="materi", api=True)
     return Response(serial.data)
 
 @api_view(['GET'])
@@ -102,7 +104,8 @@ def listmateri_apiview(request, format=None):
     except:
         return Response({'status': 'Error retrieving'})
 
-    serial = MateriSerializer(queryset, many=True)
+    serial = MateriSerializer(queryset, many=True, context={'request': request})
+    Logakses.objects.create(user=request.user, keterangan="listmateri", api=True)
     return Response(serial.data)
 
 
@@ -169,6 +172,7 @@ def mendaftar_apiview(request, pk):
     queryset = Pendaftaran.objects.filter(user=request.user)
     
     serial = PendaftaranSerializer(queryset, many=True)
+    Logakses.objects.create(user=request.user, materi=Materi.objects.get(id=pk), keterangan="mendaftar", api=True)
     return Response({'status': 'Berhasil / Telah di daftarkan'})
 
 @api_view(['GET'])
@@ -178,6 +182,7 @@ def tugas_apiview(request,pk):
     queryset = Tugas.objects.filter(id=pk)
     
     serial = TugasSerializer(queryset, many=True)
+    Logakses.objects.create(user=request.user, keterangan="lihattugas", api=True)
     return Response(serial.data)
 
 @api_view(['GET'])
@@ -187,5 +192,11 @@ def soal_apiview(request,pk):
     queryset = Soal.objects.filter(tugas=pk)
     
     serial = SoalSerializer(queryset, many=True)
+    Logakses.objects.create(user=request.user, keterangan="lihatsoal", api=True)
     return Response(serial.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def view_topic(request,pk):
+    Logakses.objects.create(user=request.user, topic=Topic.objects.get(id=pk), keterangan="topicview", api=True)
+    return Response({"status": "logged"})

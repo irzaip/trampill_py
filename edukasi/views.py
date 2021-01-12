@@ -146,7 +146,26 @@ def homePage(request):
 
     context = {'materis': materis, 'playlist': playlist}
     context = {**context, **navmenu}
+    
     return render(request, 'edukasi/home.html', context)
+
+def dashboard(request):
+    navmenu = get_user_menu(request)
+
+    materis = Pendaftaran.objects.filter(user=request.user)
+
+    if request.user.is_superuser:
+        dashboard = [{'judul': 'Total user', 'angka': User.objects.all().count() },
+            {'judul': 'Total Materi', 'angka': Materi.objects.all().count()},
+            {'judul': 'Total Tugas', 'angka': Tugas.objects.all().count()},
+            {'judul': 'Total Soal', 'angka': Soal.objects.all().count()},
+        ]
+    else:
+        dashboard = {}
+        
+    context = {'materis': materis, 'dashboard': dashboard}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/dashboard.html', context)
 
 
 def listmateri(request):

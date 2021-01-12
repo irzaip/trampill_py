@@ -21,6 +21,7 @@ urlpatterns = [
         views.activate, name='activate'),
     path('please_verify/', views.please_verify, name='please_verify'),
     path('messages/', views.messages, name='messages'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('add_materi/', views.add_materi, name='add_materi'),
     path('add_materi_topic/<str:sid>/', views.add_materi_topic, name='add_materi_topic'),
     path('edit_materi/<str:sid>/', views.edit_materi, name='edit_materi'),
@@ -62,5 +63,6 @@ urlpatterns = [
     path('api/pembayaran/', apiviews.pembayaran_apiview, name='pembayaran_apiview'),
     path('api/tugas/<int:pk>/', apiviews.tugas_apiview, name='tugas_apiview'),
     path('api/soal/<int:pk>/', apiviews.soal_apiview, name='soal_apiview'),
+    path('api/view_topic/<int:pk>/', apiviews.view_topic, name='view_topic'),
 
 ]

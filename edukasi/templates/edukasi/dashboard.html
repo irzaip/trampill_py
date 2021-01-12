@@ -1,0 +1,45 @@
+{% extends 'edukasi/main.html' %}
+
+
+{% block content %}
+
+{% if user.is_superuser %}
+<div class="container" style="margin-top: 20px;">
+    <h2 style="margin-bottom: 20px;"><center>Dashboard</center></h2>
+    <div class="row">
+      {% for i in dashboard %}
+      <div class="col-sm-3">
+          <div class="card text-white text-center border h-100  bg-info">
+            <div class="card-body">
+              <p class="card-title font-weight-bold ">{{ i.judul }}</p>
+              <p class="card-text" style="font-size: 3em;">{{ i.angka }}</p>
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="container">
+    <h2 style="margin-bottom: 20px; margin-top: 20px;"><center>Kamu mendaftar di:</center></h2>
+    <div class="row justify-content-end">
+      <a href="{% url 'listmateri' %}">[Lihat semua materi]</a>
+    </div>
+  
+    <div class="row">
+      {% for i in materis %}
+      <div class="col-sm-3">
+          <div class="card border h-100  bg-light">
+            <div class="card-body">
+              <p class="card-title font-weight-bold"><a href="{% url 'materi' i.materi.id %}">{{ i.materi.judul }}</a></p>
+              <p class="card-text" style="font-size: 0.9em;">{{ i.materi.pendek }}</p>
+            </div>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+</div>
+
+ 
+{% endblock %}

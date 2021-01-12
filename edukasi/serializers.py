@@ -27,9 +27,12 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'name']
 
 class MateriSerializer(serializers.ModelSerializer):
+    tags = serializers.SlugRelatedField(many=True, read_only=True,slug_field='name')
+
     class Meta:
         model = Materi
         fields = [
+            'id',
             'judul',
             'kode',
             'rating',
@@ -38,6 +41,7 @@ class MateriSerializer(serializers.ModelSerializer):
             'gambar',
             'kategori',
             'copywrite',
+            'tags',
             'harga',
             'discount',
             'pengajar',
@@ -67,11 +71,15 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'groups']
 
 class PendaftaranSerializer(serializers.ModelSerializer):
+    #materi = MateriSerializer(many=False)
+    
     class Meta:
         model = Pendaftaran
-        fields = ['user', 'materi']
+        fields = ['materi']
+        depth = 1
 
 class FavoritSerializer(serializers.ModelSerializer):
+    materi = MateriSerializer(many=False)
     class Meta:
         model = Favorit
         fields = ['user', 'materi']

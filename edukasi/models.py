@@ -268,3 +268,17 @@ class Jawaban(models.Model):
 
     def __str__(self):
         return str(self.id) + "-" + self.user.username + "-" + str(self.soal.id) + "-" + self.soal.pertanyaan
+
+    
+class Logakses(models.Model):
+    user =  models.ForeignKey(User, on_delete=models.CASCADE)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True)
+    soal = models.ForeignKey(Soal, on_delete=models.CASCADE, null=True, blank=True)
+    keterangan = models.CharField(max_length=100, null=True, blank=True)
+    api = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return str(self.id) + "-" + self.user.username + "-" + self.keterangan + "-" + str(self.date_created)
+    
