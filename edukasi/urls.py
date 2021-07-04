@@ -64,5 +64,6 @@ urlpatterns = [
     path('api/tugas/<int:pk>/', apiviews.tugas_apiview, name='tugas_apiview'),
     path('api/soal/<int:pk>/', apiviews.soal_apiview, name='soal_apiview'),
     path('api/view_topic/<int:pk>/', apiviews.view_topic, name='view_topic'),
-
+    path('kegiatan/<str:sid>/', views.view_kegiatan, name='view_kegiatan'),
+    
 ]

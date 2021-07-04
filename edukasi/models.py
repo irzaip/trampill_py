@@ -282,3 +282,59 @@ class Logakses(models.Model):
     def __str__(self):
         return str(self.id) + "-" + self.user.username + "-" + self.keterangan + "-" + str(self.date_created)
     
+class Review(models.Model):
+    bintang = (
+        (1,'*'),
+        (2,'**'),
+        (3,'***'),
+        (4,'****'),
+        (5,'*****')
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
+    ulasan = models.TextField()
+    rating = models.IntegerField(default='5', choices=bintang)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return str(self.id) + "-" + self.user.username + "-[" + self.materi.judul + "]-" + str(self.ulasan) + "-" + str(self.rating)
+
+class Penyelenggara(models.Model):
+    statusp = (
+        ('belum terverifikasi', 'belum terverifikasi'),
+        ('terverifikasi', 'terverifikasi'),
+        ('pending', 'pending'),
+    )
+    nama_penyelenggara = models.CharField(max_length=200, null=True)
+    alamat_penyelenggara = models.TextField()
+    status = models.CharField(max_length=50, choices=statusp)
+    def __str__(self):
+        return str(self.id) + "-" + self.nama_penyelenggara
+
+class Kegiatan(models.Model):
+    bintang = (
+        (1,'*'),
+        (2,'**'),
+        (3,'***'),
+        (4,'****'),
+        (5,'*****')
+    )
+
+    status_acr = (
+        ('belum terverifikasi', 'belum terverifikasi'),
+        ('terverifikasi', 'terverifikasi'),
+        ('pending', 'pending')
+    )
+
+    judul_acara =  models.CharField(max_length=200, null=True)
+    status_acara = models.CharField(max_length=100, choices=status_acr, null=True)
+    penyelenggara =  models.ForeignKey(Penyelenggara, on_delete=models.CASCADE, null=True, blank=True)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
+    deskripsi = models.TextField()
+    rating = models.IntegerField(default='5', choices=bintang)
+    tanggal_mulai = models.DateTimeField(auto_now_add=True, null=True)
+    tanggal_selesai = models.DateTimeField(auto_now_add=True, null=True)
+    url_donasi = models.CharField(max_length=300, null=True)
+
+    def __str__(self):
+        return str(self.id)+"-"+self.judul_acara

@@ -149,6 +149,7 @@ def homePage(request):
     
     return render(request, 'edukasi/home.html', context)
 
+@login_required(login_url='login')
 def dashboard(request):
     navmenu = get_user_menu(request)
 
@@ -192,8 +193,24 @@ def materi(request, sid):
 
     topics = Topic.objects.filter(materi=materi.id)
 
+    review = Review.objects.filter(materi=materi.id)
+
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            ulasan = form.cleaned_data.get('ulasan')
+            rating = form.cleaned_data.get('rating')
+            form.save()
+            print("Saved")
+            redirect('materi', sid)
+    else:
+        data = {'user': request.user, 'materi': sid}
+        form = ReviewForm(initial=data)
+
+
     context = {'materi': materi, 'starttopic': starttopic,
-               'tags': tags, 'topics': topics}
+               'tags': tags, 'topics': topics, 'review': review, 'form': form}
     context = {**context, **navmenu}
     return render(request, 'edukasi/materi.html', context)
 
@@ -264,21 +281,17 @@ def topic(request, sid):
         tugas = ""
 
     diskusi = Diskusi.objects.filter(topic=sid)
-    diskusiForm = DiskusiForm()
+
     if request.method == "POST":
-
-        data = {'user': request.user,
-                'topic': sid,
-                'pesan': request.POST.get('pesan')
-                }
-        diskusi = DiskusiForm(data)
-
-        if diskusi.is_valid():
-            diskusi.save()
+        diskusiForm = DiskusiForm(request.POST)
+        if diskusiForm.is_valid():
+            pesan = diskusiForm.cleaned_data.get('pesan')
+            diskusiForm.save()
             return redirect('topic', sid)
-
     else:
-        diskusiForm = DiskusiForm()
+        data = {'user': request.user,
+                'topic': sid, }
+        diskusiForm = DiskusiForm(initial=data)
 
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
                'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
@@ -880,3 +893,14 @@ def ytb_playlist_confirm(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/ytb_playlist_confirm.html', context)
 
+def view_kegiatan(request, sid):
+    navmenu = get_user_menu(request)
+
+    kegiatan = Kegiatan.objects.get(id=sid)
+
+    materis = Materi.objects.filter(id=kegiatan.materi.id)
+
+
+    context = {'kegiatan': kegiatan, 'materis': materis}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/kegiatan.html', context)

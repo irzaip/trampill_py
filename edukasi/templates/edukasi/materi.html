@@ -1,5 +1,5 @@
 {% extends 'edukasi/main.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -47,10 +47,6 @@
                     <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
                     <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
                   </div>
-                          
-
-      
-            
           </div>
           <div class="card-footer text-muted">
             
@@ -58,11 +54,44 @@
             
           </div>
         </div>
+
+                <!-- Go to www.addthis.com/dashboard to customize your tools -->
+                <div class="align-content-center addthis_inline_share_toolbox"></div>
+            
+
+            <div class="row-mx-auto" style="margin-top: 30px;"><h3 class="text-center">Review Pengguna</h3></div>
+              {% for r in review %}
+              <div class="card" style="margin-top: 10px;">
+                <div class="card-header bg-info text-white">
+                  <strong>{{ r.user.username }}</strong> - <{{ r.date_created | date:"d M Y" }}>
+                </div>
+                <div class="card-body">
+                  <div class="card-text">{{ r.ulasan }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            
+            {% if request.user.is_authenticated %}
+            <div class="row-mx-auto" style="margin-top: 30px;">
+              <div class="card">
+                <div class="card-header bg-info text-white"><strong>Tulis Review kamu</strong></div>
+                <div class="card-body">
+                  <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <button type="submit" class="btn btn-primary">Kirim Review</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% endif %}
       </div>
       <div class="col-sm=1 col-md-2"></div>
 
     </div>
    </div>
 
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=irzaip"></script>
       
 {% endblock %}

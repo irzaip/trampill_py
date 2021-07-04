@@ -1,0 +1,32 @@
+LISENSI WAKAF
+
+Copyright (c) 2020 Irza Pulungan
+
+Izin dengan ini diberikan, gratis, kepada siapa pun yang mendapatkan salinannya
+perangkat lunak ini dan file dokumentasi terkait ("Perangkat Lunak"), untuk menangani
+dalam Perangkat Lunak tanpa batasan, termasuk beberapa batasan hak
+untuk menggunakan, menyalin, memodifikasi, menggabungkan, menerbitkan, mendistribusikan, 
+salinan Perangkat Lunak, dan untuk mengizinkan orang yang kepadanya Perangkat Lunak itu
+dilengkapi untuk melakukannya, dengan tunduk pada ketentuan berikut:
+
+Adapun kode yang terlampir sudah menjadi bagian wakaf, dan dalam artian yang lebih spesifik, harus menjadi
+bagian dari kemajuan umat Islam, dan penggunaan yang tidak memenuhi ketentuan syariat agama sama sekali
+tidak diperbolehkan.
+
+Pengelola aset wakaf boleh memperoleh hasil dari pemanfaatan software ini, tetapi bukan dari jual beli
+software terlampir.
+
+Pemberitahuan hak cipta di atas dan pemberitahuan izin ini harus disertakan di semua
+salinan atau bagian penting dari Perangkat Lunak.
+
+Sumber dari source wakaf tidak boleh disembunyikan dalam cara apapun.
+
+Penggunaan software ini harus mengatribusikan pembuat perangkat lunak ini.
+
+PERANGKAT LUNAK INI DIBERIKAN "SEBAGAIMANA ADANYA", TANPA JAMINAN APA PUN, TERSURAT ATAU
+TERSIRAT, TERMASUK NAMUN TIDAK TERBATAS PADA JAMINAN DIPERDAGANGKAN,
+KESESUAIAN UNTUK TUJUAN TERTENTU DAN KETIDAKPADAAN. DALAM KEADAAN APA PUN
+PENULIS ATAU PEMEGANG HAK CIPTA BERTANGGUNG JAWAB ATAS KLAIM, KERUSAKAN ATAU LAINNYA
+TANGGUNG JAWAB, BAIK DALAM TINDAKAN KONTRAK, PELAKSANAAN ATAU LAINNYA, YANG TIMBUL DARI,
+KELUAR ATAU SEHUBUNGAN DENGAN PERANGKAT LUNAK ATAU PENGGUNAAN ATAU PERHUBUNGAN LAIN DALAM
+PERANGKAT LUNAK.

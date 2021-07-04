@@ -78,6 +78,21 @@ class DiskusiForm(ModelForm):
     class Meta:
         model = Diskusi
         fields = '__all__'
+        widgets = {
+            'user': forms.HiddenInput(),
+            'topic': forms.HiddenInput(),
+            'pesan': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        fields = ['user','materi','ulasan','rating']
+        widgets = {
+            'user': forms.HiddenInput(),
+            'materi': forms.HiddenInput(),
+          'ulasan': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }
 
 class JawabanForm(ModelForm):
     class Meta:
