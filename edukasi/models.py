@@ -8,8 +8,21 @@ def random_char(y):
        return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
 # Create your models here.
+class Pengajar(models.Model):
+    nama = models.CharField(max_length=200)
+    lokasi = models.CharField(max_length=200, blank=True)
+    tentang_pengajar = RichTextField(null=True, blank=True)
+    bank = models.CharField(max_length=200, blank=True)
+    no_akun = models.CharField(max_length=200, blank=True)
 
-# Create your models here.
+    @classmethod
+    def create_pengajar(cls, nama, tentang_pengajar):
+        pengajar = cls(nama=nama, tentang_pengajar=tentang_pengajar)
+        return pengajar
+
+    def __str__(self):
+        return str(self.id)+"-"+self.nama
+
 class UserExt(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     phone = models.CharField(max_length=200)
@@ -51,8 +64,7 @@ class Materi(models.Model):
     copywrite = RichTextField(null=True, blank=True)
     harga = models.IntegerField(default=0)
     discount = models.IntegerField(default=0)
-    pengajar = models.CharField(max_length=40, null=True, blank=True)
-    tentang_pengajar = RichTextField(null=True, blank=True)
+    pengajar = models.ForeignKey(Pengajar, on_delete=models.CASCADE, null=True, blank=True)
     hidden = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     frontpage = models.BooleanField(default=False)
@@ -338,3 +350,4 @@ class Kegiatan(models.Model):
 
     def __str__(self):
         return str(self.id)+"-"+self.judul_acara
+
