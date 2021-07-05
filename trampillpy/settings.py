@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'edukasi',
     'django_filters',
-    'ckeditors',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
