@@ -140,11 +140,13 @@ def logoutPage(request):
 def homePage(request):
     navmenu = get_user_menu(request)
 
+    kegiatans = Kegiatan.objects.all()[:4]
+
     materis = Materi.objects.all()[:4]
 
     playlist = Materi.objects.filter(playlist=True)
 
-    context = {'materis': materis, 'playlist': playlist}
+    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans}
     context = {**context, **navmenu}
     
     return render(request, 'edukasi/home.html', context)
@@ -866,15 +868,20 @@ def ytb_playlist_confirm(request):
         pendek = request.POST.get('pendek')
         deskripsi = request.POST.get('deskripsi')
         pengajar = request.POST.get('pengajar')
-        tentang_pengajar = request.POST.get('tentang_pengajar')
+        tentang_pengajar = '.'
+
+        ppengajar = Pengajar.objects.get(nama=pengajar)
+
+        if not ppengajar:
+            ppengajar = Pengajar.create_pengajar(nama=pengajar, tentang_pengajar=tentang_pengajar)
+            ppengajar.save()
 
         materi = Materi.objects.create(
             judul=judul,
             kode=kode,
             pendek=pendek,
             deskripsi=deskripsi,
-            pengajar=pengajar,
-            tentang_pengajar=tentang_pengajar,
+            pengajar=ppengajar,
             hidden=True,
             playlist=True,
         )
@@ -904,3 +911,15 @@ def view_kegiatan(request, sid):
     context = {'kegiatan': kegiatan, 'materis': materis}
     context = {**context, **navmenu}
     return render(request, 'edukasi/kegiatan.html', context)
+
+
+def list_kegiatan(request):
+    navmenu = get_user_menu(request)
+
+    kegiatan = Kegiatan.objects.all()
+
+    
+    context = {'kegiatan': kegiatan}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/listkegiatan.html', context)
+    

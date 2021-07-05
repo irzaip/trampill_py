@@ -23,11 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'vypic2_mg4@#os$szv0d#kcjfjaaouvllyn!3@=qmhki^#7ux^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['neo.trampill.com', ]
+ALLOWED_HOSTS = ['neo.trampill.com', '192.168.30.50', '127.0.0.1']
 
+USE_THOUSAND_SEPARATOR = True
 
+THOUSAND_SEPARATOR = '\xa0'
 # Application definition
 
 INSTALLED_APPS = [
@@ -143,6 +145,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }
 
 EMAIL_USE_TLS = True
