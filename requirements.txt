@@ -10,3 +10,4 @@ google-api-python-client==1.10.0
 google-auth-oauthlib==0.4.1
 google-auth-httplib2==0.0.4
 PyYAML==5.4.1
+django-environ==0.4.5
