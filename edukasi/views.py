@@ -53,6 +53,7 @@ def get_user_menu(request):
 
 # Create your views here.
 def registerPage(request):
+    context = dict()
     form = CreateUserForm()
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
@@ -85,6 +86,8 @@ def registerPage(request):
                 mail_subject, message, to=[to_email]
             )
             email.send()
+            context['uidb64'] = urlsafe_base64_encode(force_bytes(user.pk))
+            context['token'] = account_activation_token.make_token(user)
 
             int_messages.success(
                 request, "Account created successfully, FIRST verify your EMAIL")
@@ -92,7 +95,7 @@ def registerPage(request):
         else:
             return HttpResponse("Error creating new user -> check user and password requirements")
 
-    context = {'form': form}
+    context['form'] = form
     return render(request, 'edukasi/register.html', context)
 
 

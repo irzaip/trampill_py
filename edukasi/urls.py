@@ -17,8 +17,12 @@ urlpatterns = [
     path('kontribusi/', views.kontribusi, name='kontribusi'),
     path('faq/', views.faq, name='faq'),
     path('feature/', views.feature, name='feature'),
-    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.activate, name='activate'),
+    # re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    #    views.activate, name='activate'),
+    path(
+        'activate/<slug:uidb64>/<slug:token>/', 
+        views.activate, name='activate'
+    ),
     path('please_verify/', views.please_verify, name='please_verify'),
     path('messages/', views.messages, name='messages'),
     path('dashboard/', views.dashboard, name='dashboard'),
