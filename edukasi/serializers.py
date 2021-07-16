@@ -28,7 +28,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class MateriSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, read_only=True,slug_field='name')
-
+    pengajar = serializers.ReadOnlyField(source='pengajar.nama')
+    tentang_pengajar = serializers.ReadOnlyField(source='pengajar.tentang_pengajar')
+    
     class Meta:
         model = Materi
         fields = [
