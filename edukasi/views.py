@@ -604,7 +604,7 @@ def daftarmateri(request, sid):
     price = materi.harga
     discount = materi.discount
     bayar = (price * (100 - discount)) / 100
-    rndm = random.randint(0, 100)
+    rndm = random.randint(0, 99)
     byr_rnd = bayar + rndm
 
     if request.method == "POST":

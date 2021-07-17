@@ -1,6 +1,7 @@
 {% extends 'edukasi/main.html' %}
 {% load humanize %}
 
+
 {% block content %}
 
 <div class="container" style="margin-top: 20px;">
@@ -56,7 +57,7 @@
               <input type="text" value="02992002992" id="myInput" readonly>
               <a href="#" onclick="myFunction()">Copy</a>              
               <p>Bank Central Asia, KCP Woltermongonsidi.</p>
-              Total Transfer: <input type="text" value="{{ byr_rnd | floatformat:0 | intcomma }}" id="myTotal" readonly>
+              Total Transfer: <input type="text" value="{{ byr_rnd | floatformat:0 }}" id="myTotal" readonly>
               <a href="#" onclick="myFunction2()">Copy</a>
           </div>
           <div class="card-footer">
