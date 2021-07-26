@@ -143,13 +143,17 @@ def logoutPage(request):
 def homePage(request):
     navmenu = get_user_menu(request)
 
-    kegiatans = Kegiatan.objects.all()[:4]
+    import datetime
+    today = datetime.datetime.today()
+    kegiatans = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
 
     materis = Materi.objects.all()[:4]
 
     playlist = Materi.objects.filter(playlist=True)
 
-    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans}
+    pengumuman = Pengumuman.objects.filter(frontpage=True)
+
+    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans, 'pengumuman': pengumuman}
     context = {**context, **navmenu}
     
     return render(request, 'edukasi/home.html', context)

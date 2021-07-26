@@ -17,9 +17,13 @@
             <p class="card-text">Status acara: {{ kegiatan.status_acara }}</p>
             <p class="card-text">Tanggal: {{ kegiatan.tanggal_mulai | date:"d M Y"}} s.d {{ kegiatan.tanggal_selesai |  date:"d M Y" }}</p>
             <p class="card-text">Deskripsi: {{ kegiatan.deskripsi | safe }}</p>
-            <p class="card-text btn">url donasi: {{ kegiatan.url_donasi }}</p>
-            
+            <a class="btn btn-primary" href="{{ kegiatan.url_donasi }}">url donasi</a>
+            <hr>          
+            <p class="card-text">Materi: {{ kegiatan.materi.judul | safe }}</p>
+            <p class="card-text">Pengajar: {{ kegiatan.materi.pengajar.nama | safe }}</p>
+            <p class="card-text">Tentang pengajar: {{ kegiatan.materi.pengajar.tentang_pengajar | safe }}</p>
 
+            
           </div>
           <div class="card-footer">
             

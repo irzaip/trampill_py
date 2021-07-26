@@ -344,8 +344,8 @@ class Kegiatan(models.Model):
     materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
     deskripsi = models.TextField()
     rating = models.IntegerField(default='5', choices=bintang)
-    tanggal_mulai = models.DateTimeField(auto_now_add=True, null=True)
-    tanggal_selesai = models.DateTimeField(auto_now_add=True, null=True)
+    tanggal_mulai = models.DateTimeField(null=True)
+    tanggal_selesai = models.DateTimeField(null=True)
     url_donasi = models.CharField(max_length=300, null=True)
 
     def __str__(self):
