@@ -14,13 +14,17 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from edukasi.serializers import *
+from django.contrib.auth.forms import PasswordResetForm
+from django.db.models.query_utils import Q
+from django.contrib.auth.tokens import default_token_generator
+
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail, BadHeaderError
 
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
@@ -49,7 +53,33 @@ def get_user_menu(request):
     return navmenu
 
 
-
+def password_reset_request(request):
+	if request.method == "POST":
+		password_reset_form = PasswordResetForm(request.POST)
+		if password_reset_form.is_valid():
+			data = password_reset_form.cleaned_data['email']
+			associated_users = User.objects.filter(Q(email=data))
+			if associated_users.exists():
+				for user in associated_users:
+					subject = "Permohonan reset Password"
+					email_template_name = "edukasi/password_reset_email.txt"
+					c = {
+					"email":user.email,
+					'domain':'neo.trampill.com',
+					'site_name': 'Trampill',
+					"uid": urlsafe_base64_encode(force_bytes(user.pk)),
+					"user": user,
+					'token': default_token_generator.make_token(user),
+					'protocol': 'http',
+					}
+					email = render_to_string(email_template_name, c)
+					try:
+						send_mail(subject, email, 'noreply@trampill.com' , [user.email], fail_silently=False)
+					except BadHeaderError:
+						return HttpResponse('Invalid header found.')
+					return redirect ("/password_reset/done/")
+	password_reset_form = PasswordResetForm()
+	return render(request=request, template_name="edukasi/password_reset.html", context={"password_reset_form":password_reset_form})
 
 # Create your views here.
 def registerPage(request):
@@ -143,13 +173,17 @@ def logoutPage(request):
 def homePage(request):
     navmenu = get_user_menu(request)
 
-    kegiatans = Kegiatan.objects.all()[:4]
+    import datetime
+    today = datetime.datetime.today()
+    kegiatans = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
 
     materis = Materi.objects.all()[:4]
 
     playlist = Materi.objects.filter(playlist=True)
 
-    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans}
+    pengumuman = Pengumuman.objects.filter(frontpage=True)
+
+    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans, 'pengumuman': pengumuman}
     context = {**context, **navmenu}
     
     return render(request, 'edukasi/home.html', context)
@@ -176,7 +210,7 @@ def dashboard(request):
 
 def listmateri(request):
     navmenu = get_user_menu(request)
-    materis = Materi.objects.all()
+    materis = Materi.objects.filter(playlist=False)
 
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
@@ -184,6 +218,17 @@ def listmateri(request):
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
+
+def listplaylist(request):
+    navmenu = get_user_menu(request)
+    materis = Materi.objects.filter(playlist=True)
+
+    mFilter = MateriFilter(request.GET, queryset=materis)
+    materis = mFilter.qs
+
+    context = {'materis': materis, 'mFilter': mFilter}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/listplaylist.html', context)
 
 
 def materi(request, sid):
@@ -604,7 +649,7 @@ def daftarmateri(request, sid):
     price = materi.harga
     discount = materi.discount
     bayar = (price * (100 - discount)) / 100
-    rndm = random.randint(0, 100)
+    rndm = random.randint(0, 99)
     byr_rnd = bayar + rndm
 
     if request.method == "POST":

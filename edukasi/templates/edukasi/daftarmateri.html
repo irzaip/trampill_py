@@ -1,6 +1,7 @@
 {% extends 'edukasi/main.html' %}
 {% load humanize %}
 
+
 {% block content %}
 
 <div class="container" style="margin-top: 20px;">
@@ -14,9 +15,9 @@
 
         <p>{{ materi.pendek | safe }}</p>
 
-        <p>Pengajar: <strong>{{ materi.pengajar }}</strong></p>
-        {% if materi.tentang_pengajar %}
-        <p>{{ materi.tentang_pengajar | safe }}</p>
+        <p>Pengajar: <strong>{{ materi.pengajar.nama }}</strong></p>
+        {% if materi.pengajar.tentang_pengajar %}
+        <p>Tentang pengajar: {{ materi.pengajar.tentang_pengajar | safe }}</p>
         {% endif %}
 
         {% if materi.playlist %}
@@ -54,9 +55,16 @@
             <br>Nama : <strong>IRZA IMRANY PULUNGAN</strong><br>
               No.rekening:
               <input type="text" value="02992002992" id="myInput" readonly>
-              <a href="#" onclick="myFunction()">Copy</a>
+              <a href="#" onclick="myFunction()">Copy</a>              
               <p>Bank Central Asia, KCP Woltermongonsidi.</p>
+              Total Transfer: <input type="text" value="{{ byr_rnd | floatformat:0 }}" id="myTotal" readonly>
+              <a href="#" onclick="myFunction2()">Copy</a>
           </div>
+          <div class="card-footer">
+          <p>Khusus siswa yang merasa tidak mampu dapat mengajukan keringanan biaya, dengan melakukan hal dibawah ini:
+          Email ke admin dengan judul <strong>PERMOHONAN KERINGANAN BIAYA</strong> serta menuliskan alasan kenapa anda mengajukan
+          permohonan keringanan biaya.</p>
+        </div>
         </div>
         {% endif %}
 
@@ -85,5 +93,21 @@
       /* Alert the copied text */
       alert("No. rekening talah di copy: " + copyText.value);
     }
+</script>     
+<script>
+  function myFunction2() {
+  /* Get the text field */
+  var copyText = document.getElementById("myTotal");
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  alert("No. rekening talah di copy: " + copyText.value);
+}
 </script>      
 {% endblock %}

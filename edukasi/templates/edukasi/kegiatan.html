@@ -9,7 +9,9 @@
       <div class="col-sm-10 col-md-8">
         <div class="card text-center">
           <div class="card-header">
+            {% if kegiatan.materi %}
             {{ kegiatan.materi.judul }}
+            {% endif %}
           </div>
           <div class="card-body">
             <h2 class="card-title">{{ kegiatan.judul_acara }}</h2>
@@ -17,9 +19,14 @@
             <p class="card-text">Status acara: {{ kegiatan.status_acara }}</p>
             <p class="card-text">Tanggal: {{ kegiatan.tanggal_mulai | date:"d M Y"}} s.d {{ kegiatan.tanggal_selesai |  date:"d M Y" }}</p>
             <p class="card-text">Deskripsi: {{ kegiatan.deskripsi | safe }}</p>
-            <p class="card-text btn">url donasi: {{ kegiatan.url_donasi }}</p>
+            <a class="btn btn-primary" href="{{ kegiatan.url_donasi }}">url donasi</a>
+            <hr>          
+            {% kegiatan.materi.judul %}
+            <p class="card-text">Materi: {{ kegiatan.materi.judul | safe }}</p>
+            <p class="card-text">Pengajar: {{ kegiatan.materi.pengajar.nama | safe }}</p>
+            <p class="card-text">Tentang pengajar: {{ kegiatan.materi.pengajar.tentang_pengajar | safe }}</p>
+            {% endif %}
             
-
           </div>
           <div class="card-footer">
             
