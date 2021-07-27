@@ -7,29 +7,33 @@
     <div class="row auto-mx">
       <div class="col-sm-1 col-md-2"></div>
       <div class="col-sm-10 col-md-8">
-        <div class="card text-center">
-          <div class="card-header">
-            {{ kegiatan.materi.judul }}
+        {% for k in kegiatan %}
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-header text-white bg-info">
+            {{ k.materi.judul }}
           </div>
           <div class="card-body">
-            <h2 class="card-title">{{ kegiatan.judul_acara }}</h2>
-            <p class="card-text">Penyelenggara: {{ kegiatan.penyelenggara.nama_penyelenggara }} ({{ kegiatan.penyelenggara.status }})</p>
-            <p class="card-text">Status acara: {{ kegiatan.status_acara }}</p>
-            <p class="card-text">Tanggal: {{ kegiatan.tanggal_mulai | date:"d M Y"}} s.d {{ kegiatan.tanggal_selesai |  date:"d M Y" }}</p>
-            <p class="card-text">Deskripsi: {{ kegiatan.deskripsi | safe }}</p>
-            <p class="card-text btn">url donasi: {{ kegiatan.url_donasi }}</p>
+            <h2 class="card-title ">{{ k.judul_acara }}</h2>
+            <p class="card-text">Penyelenggara: {{ k.penyelenggara.nama_penyelenggara }} ({{ k.penyelenggara.status }})</p>
+            <p class="card-text">Status acara: {{ k.status_acara }}</p>
+            <p class="card-text">Tanggal: {{ k.tanggal_mulai | date:"d M Y"}} s.d {{ k.tanggal_selesai |  date:"d M Y" }}</p>
+            <p class="card-text">Deskripsi: {{ k.deskripsi | safe }}</p>
+
+            {% if k.materi.id %}
+            <a class="btn btn-primary" href="{% url 'materi' k.materi.id %}">Lihat Materi</a>
+            {% endif %}
+            <a class="btn btn-secondary" href="{{ kegiatan.url_donasi }}">url donasi</a>
             
 
           </div>
           <div class="card-footer">
-            
-
-          </div>
-        </div>
-
                 <!-- Go to www.addthis.com/dashboard to customize your tools -->
                 <div class="align-content-center addthis_inline_share_toolbox"></div>
-            
+          </div>
+        </div>
+        
+
+        {% endfor %}    
 
             
       </div>

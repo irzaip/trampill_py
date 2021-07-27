@@ -28,7 +28,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('edukasi.urls')),
     path('', include(router.urls)),
-    path('api/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api/', include('rest_framework.urls', namespace='rest_framework')),
+    path("password_reset", views.password_reset_request, name="password_reset")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

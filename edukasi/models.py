@@ -14,6 +14,7 @@ class Pengajar(models.Model):
     tentang_pengajar = RichTextField(null=True, blank=True)
     bank = models.CharField(max_length=200, blank=True)
     no_akun = models.CharField(max_length=200, blank=True)
+    ewallet = models.CharField(max_length=200, blank=True)
 
     @classmethod
     def create_pengajar(cls, nama, tentang_pengajar):
@@ -304,7 +305,7 @@ class Review(models.Model):
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
-    ulasan = models.TextField()
+    ulasan = RichTextField()
     rating = models.IntegerField(default='5', choices=bintang)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -342,7 +343,7 @@ class Kegiatan(models.Model):
     status_acara = models.CharField(max_length=100, choices=status_acr, null=True)
     penyelenggara =  models.ForeignKey(Penyelenggara, on_delete=models.CASCADE, null=True, blank=True)
     materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
-    deskripsi = models.TextField()
+    deskripsi = RichTextField()
     rating = models.IntegerField(default='5', choices=bintang)
     tanggal_mulai = models.DateTimeField(null=True)
     tanggal_selesai = models.DateTimeField(null=True)
@@ -351,3 +352,42 @@ class Kegiatan(models.Model):
     def __str__(self):
         return str(self.id)+"-"+self.judul_acara
 
+
+class RingKegiatan(models.Model):
+    bintang = (
+        (1,'*'),
+        (2,'**'),
+        (3,'***'),
+        (4,'****'),
+        (5,'*****')
+    )
+
+    status_acr = (
+        ('belum terverifikasi', 'belum terverifikasi'),
+        ('terverifikasi', 'terverifikasi'),
+        ('pending', 'pending')
+    )
+
+    ring_ref = models.CharField(max_length=200, null=True, blank=True)
+    judul_acara =  models.CharField(max_length=200, null=True)
+    status_acara = models.CharField(max_length=100, choices=status_acr, null=True)
+    penyelenggara =  models.ForeignKey(Penyelenggara, on_delete=models.CASCADE, null=True, blank=True)
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, null=True, blank=True)
+    lokasi = models.CharField(max_length=200,null=True, blank=True)
+    deskripsi = RichTextField()
+    rating = models.IntegerField(default='5', choices=bintang)
+    tanggal_mulai = models.DateTimeField(null=True)
+    tanggal_selesai = models.DateTimeField(null=True)
+    url_donasi = models.CharField(max_length=300, null=True)
+
+    def __str__(self):
+        return str(self.id)+"-"+self.judul_acara
+
+
+class Ring_getter(models.Model):
+    ring_name = models.CharField(max_length=200,null=True, blank=True)
+    ring_ref = models.CharField(max_length=200,null=True, blank=True)
+    ring_url = models.CharField(max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)+"-"+self.ring_ref

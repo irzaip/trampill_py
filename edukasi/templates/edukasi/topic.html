@@ -15,8 +15,10 @@
                     <div class="container row addthis_inline_share_toolbox" style="margin-top: 0px;"></div>
 
                     {% if topic_content.jenis == 'Label' %}
-                    <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                    <div class="row" style="margin-top: 20px; margin-bottom: 20px; margin-left: 20px;">
+                        
                         <h5>Anda akan masuk ke pembahasan : {{ topic_content.judul }}</h5>
+                        
                     </div>
                         <p>{{ topic_content.isi_tambahan }}</p>
                     {% endif %}
