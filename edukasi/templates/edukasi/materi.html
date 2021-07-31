@@ -18,6 +18,10 @@
             
             <div class="row-mx-auto">
             <a href="{% url 'topic' starttopic %}" class="btn btn-primary">Mulai Belajar</a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'edit_materi' materi.id %}" class="btn btn-warning">EDIT</a>
+            {% endif %}
+
             <a class="btn btn-warning" href="{% url 'favorit' materi.id %}"><i class="fas fa-heart"></i></a>
             </div>
 

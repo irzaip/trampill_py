@@ -26,6 +26,7 @@
             <p class="card-text">Pengajar: {{ kegiatan.materi.pengajar.nama | safe }}</p>
             <p class="card-text">Tentang pengajar: {{ kegiatan.materi.pengajar.tentang_pengajar | safe }}</p>
             {% endif %}
+            <a class="btn btn-secondary" href="{% url 'materi' kegiatan.materi.id %}">LIHAT MATERI</a>
             
           </div>
           <div class="card-footer">
