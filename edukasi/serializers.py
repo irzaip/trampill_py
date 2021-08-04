@@ -55,6 +55,30 @@ class MateriSerializer(serializers.ModelSerializer):
         ]
 
 
+class KegiatanSerializer(serializers.ModelSerializer):
+    pengajar = serializers.ReadOnlyField(source='pengajar.nama')
+    tentang_pengajar = serializers.ReadOnlyField(source='pengajar.tentang_pengajar')
+    penyelenggara = serializers.ReadOnlyField(source='penyelenggara.')
+    judul_materi = serializers.ReadOnlyField(source='materi.judul')
+
+    class Meta:
+        model = Kegiatan
+        fields = [
+            'id',
+            'judul_acara',
+            'status_acara',
+            'penyelenggara',
+            'judul_materi',
+            'deskripsi',
+            'pengajar',
+            'tentang_pengajar',
+            'rating',
+            'tanggal_mulai',
+            'tanggal_selesai',
+            'url_donasi',
+        ]
+
+
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic

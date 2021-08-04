@@ -74,7 +74,10 @@ urlpatterns = [
     path('api/pembayaran/', apiviews.pembayaran_apiview, name='pembayaran_apiview'),
     path('api/tugas/<int:pk>/', apiviews.tugas_apiview, name='tugas_apiview'),
     path('api/soal/<int:pk>/', apiviews.soal_apiview, name='soal_apiview'),
-    path('api/view_topic/<int:pk>/', apiviews.view_topic, name='view_topic'),
+    path('api/view_topic/<int:pk>/', apiviews.view_topic, name='topic_apiview'),
+    path('api/kegiatan/<int:pk>/', apiviews.kegiatan_apiview, name='kegiatan_apiview'),
+    path('api/listkegiatan/', apiviews.listkegiatan_apiview, name='listkegiatan_apiview'),
     path('kegiatan/<str:sid>/', views.view_kegiatan, name='view_kegiatan'),
     path('listkegiatan/', views.list_kegiatan, name='list_kegiatan'),
+    
 ]

@@ -3,6 +3,7 @@ from .mylib import *
 from .decorators import *
 from .filter import *
 from .forms import *
+import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.forms import inlineformset_factory
@@ -96,6 +97,20 @@ def materi_apiview(request, pk, format=None):
     Logakses.objects.create(user=request.user, materi=queryset, keterangan="materi", api=True)
     return Response(serial.data)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def kegiatan_apiview(request, pk, format=None):
+    try:
+        queryset = Kegiatan.objects.get(id=pk)
+    except:
+        return Response({'status': 'Data Not Exists'})
+
+    serial = KegiatanSerializer(queryset, many=False)
+    #Logakses.objects.create(user=request.user, keterangan="kegiatan", api=True)
+    return Response(serial.data)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def listmateri_apiview(request, format=None):
@@ -108,6 +123,19 @@ def listmateri_apiview(request, format=None):
     Logakses.objects.create(user=request.user, keterangan="listmateri", api=True)
     return Response(serial.data)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listkegiatan_apiview(request, format=None):
+    try:
+        today = datetime.datetime.today()
+        queryset = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
+    except:
+        return Response({'status': 'Error retrieving'})
+
+    serial = KegiatanSerializer(queryset, many=True, context={'request': request})
+    #Logakses.objects.create(user=request.user, keterangan="listmateri", api=True)
+    return Response(serial.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
