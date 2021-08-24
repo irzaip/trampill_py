@@ -887,13 +887,16 @@ def ytb_playlist(request):
     playlist = YtbForms()
 
     if request.method == "POST":
-        materi = PlaylistForms(initial={'ytb_playlist_url': request.POST.get('ytb_playlist_url')})
-        result = get_content(request.POST.get(
+        result, metadata = get_content(request.POST.get(
             'ytb_playlist_url'), request.POST.get('api_key'))
         ytb_playlist_url = request.POST.get('ytb_playlist_url')
+        materi = PlaylistForms(initial={'ytb_playlist_url': request.POST.get('ytb_playlist_url'),
+          'judul': metadata['title'],
+          'pendek': metadata['description'], 
+          'pengajar': metadata['channelTitle']})
         
 
-        context = {'playlist': playlist, 'result': result, 'materi': materi, 'ytb_playlist_url': ytb_playlist_url}
+        context = {'playlist': playlist, 'result': result, 'materi': materi, 'ytb_playlist_url': ytb_playlist_url, 'metadata': metadata}
         context = {**context, **navmenu}
         return render(request, 'edukasi/ytb_playlist.html', context)
 

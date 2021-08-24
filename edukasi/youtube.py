@@ -1,7 +1,7 @@
 import yaml
 import urllib.parse as urlparse
 from urllib.parse import parse_qs
-
+import pprint
 
 #  Ini modul koneksi ke Youtube data API v3
 #  harus ada api_key
@@ -46,6 +46,7 @@ def _ytb_playlist(api_key, id=""):
         playlistId=id
     )
     response = client.execute()
+
     response = response['items']
     vid_ids = []
     for i in response:
@@ -59,6 +60,22 @@ def get_content(url, api_key):
     parsed = urlparse.urlparse(url)
     playlist = parse_qs(parsed.query)['list'][0]
 
+    #ambil metadata
+    client = yt.playlists().list(
+        part="snippet",
+        id=playlist
+    )
+    response = client.execute()
+    response = response['items'][0]
+    
+    title = response['snippet']['title']
+    description = response['snippet']['description']
+    channelTitle = response['snippet']['channelTitle']
+
+    metadata = {'title': title, 'description': description, 'channelTitle': channelTitle}
+    #pprint.pprint(metadata)
+
+
     myvid = _ytb_playlist(api_key, playlist )
     videos = []
     for vid in myvid:
@@ -66,8 +83,8 @@ def get_content(url, api_key):
             videos.append(_ytb_video(api_key, vid))
         except:
             pass
-    print(videos)
-    return videos
+    #pprint.pprint(videos)
+    return videos, metadata
 
 
 if __name__ == '__main__':
@@ -75,8 +92,11 @@ if __name__ == '__main__':
     #print(myvid)
 
     api_key= input("Masukkan api key:")
-    url = input("Masukkan url yang akan di proses")
+    #api_key = ''
+    url = input("Masukkan url yang akan di proses:")
+    url = 'https://www.youtube.com/watch?v=mFljVO5L_d0&list=PLxBhf17jrfxHQq8BYVBnelNbTte6OSy0e'
     result = get_content(url, api_key)
-    print(result)
+    pprint.pprint(result[0])
+    pprint.pprint(result[1])
 
 
