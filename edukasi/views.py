@@ -887,11 +887,13 @@ def ytb_playlist(request):
     playlist = YtbForms()
 
     if request.method == "POST":
-        materi = PlaylistForms()
+        materi = PlaylistForms(initial={'ytb_playlist_url': request.POST.get('ytb_playlist_url')})
         result = get_content(request.POST.get(
             'ytb_playlist_url'), request.POST.get('api_key'))
+        ytb_playlist_url = request.POST.get('ytb_playlist_url')
+        
 
-        context = {'playlist': playlist, 'result': result, 'materi': materi}
+        context = {'playlist': playlist, 'result': result, 'materi': materi, 'ytb_playlist_url': ytb_playlist_url}
         context = {**context, **navmenu}
         return render(request, 'edukasi/ytb_playlist.html', context)
 
@@ -917,10 +919,11 @@ def ytb_playlist_confirm(request):
         deskripsi = request.POST.get('deskripsi')
         pengajar = request.POST.get('pengajar')
         tentang_pengajar = '.'
+        ytb_playlist_url = request.POST.get('ytb_playlist_url')
 
-        ppengajar = Pengajar.objects.get(nama=pengajar)
-
-        if not ppengajar:
+        try:
+            ppengajar = Pengajar.objects.get(nama=pengajar)
+        except:
             ppengajar = Pengajar.create_pengajar(nama=pengajar, tentang_pengajar=tentang_pengajar)
             ppengajar.save()
 
@@ -930,6 +933,7 @@ def ytb_playlist_confirm(request):
             pendek=pendek,
             deskripsi=deskripsi,
             pengajar=ppengajar,
+            ytb_playlist_url=ytb_playlist_url,
             hidden=True,
             playlist=True,
         )

@@ -17,7 +17,6 @@ from urllib.parse import parse_qs
 
 #api_key = config['api_key']
 #print(api_key)
-#api_key= 'AIzaSyAO3Y2QJ3zAAZnI7QptGrap_xID2Phh638'
 
 from googleapiclient.discovery import build
 
@@ -67,6 +66,7 @@ def get_content(url, api_key):
             videos.append(_ytb_video(api_key, vid))
         except:
             pass
+    print(videos)
     return videos
 
 
@@ -74,5 +74,9 @@ if __name__ == '__main__':
     #myvid = _ytb_playlist('PLxBhf17jrfxEnd8SZOxNyEc6cgZZZWziH')
     #print(myvid)
 
-    result = get_content('PLxBhf17jrfxEnd8SZOxNyEc6cgZZZWziH')
+    api_key= input("Masukkan api key:")
+    url = input("Masukkan url yang akan di proses")
+    result = get_content(url, api_key)
     print(result)
+
+

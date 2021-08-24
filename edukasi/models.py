@@ -70,7 +70,7 @@ class Materi(models.Model):
     featured = models.BooleanField(default=False)
     frontpage = models.BooleanField(default=False)
     playlist = models.BooleanField(default=False)
-
+    ytb_playlist_url = models.CharField(max_length=300, null=True, blank=True)
 
     def __str__(self):
         return str(self.id) + "-" + self.judul

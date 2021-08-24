@@ -104,6 +104,7 @@ class YtbForms(forms.Form):
         label = 'api_key',
         max_length = 300,
         required = True,
+        help_text = 'Isi dengan API KEY Youtube V3.'
     )
     ytb_playlist_url = forms.CharField(
         label = 'Youtube Playlist',
@@ -119,7 +120,6 @@ class YtbForms(forms.Form):
         self.helper.form_class = 'YTBForms'
         self.helper.form_method = 'post'
         self.helper.form_action = 'submit_survey'
-
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
@@ -145,8 +145,9 @@ class PlaylistForms(forms.Form):
     deskripsi = RichTextField()
     pengajar = forms.CharField(max_length=40)
     tentang_pengajar = RichTextField()
-    hidden = forms.BooleanField()
-    playlist = forms.BooleanField()
+    hidden = forms.BooleanField(initial={'hidden': True})
+    playlist = forms.BooleanField(initial={'playlist': True})
+    ytb_playlist_url = forms.CharField(max_length=300)
 
 
     def __init__(self, *args, **kwargs):
