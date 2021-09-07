@@ -17,7 +17,8 @@ from edukasi.serializers import *
 from django.contrib.auth.forms import PasswordResetForm
 from django.db.models.query_utils import Q
 from django.contrib.auth.tokens import default_token_generator
-
+from django.urls import reverse
+from .future import *
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -38,6 +39,24 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+def message_user(sender, receiver, message, url=None):
+    sender=User.objects.get(username=sender)
+    
+    if receiver=="superuser":
+        receiver=User.objects.filter(is_superuser=True)
+        for r in receiver:
+            Message.objects.create(sender=sender, receiver=r, msg_content=message, url=url)
+    elif receiver == "staff":
+        receiver=User.objects.filter(is_staff=True)
+        for r in receiver:
+            Message.objects.create(sender=sender, receiver=r, msg_content=message, url=url)
+    else:
+        receiver=User.objects.get(username=receiver)
+        Message.objects.create(sender=sender, receiver=receiver, msg_content=message, url=url)
+
+
+def logthis(user, materi, topic, soal, keterangan):
+    Logakses.objects.create(user=user, materi=materi, topic=topic, soal=soal, keterangan=keterangan)
 
 def get_user_menu(request):
     try:
@@ -140,9 +159,11 @@ def activate(request, uidb64, token):
         user.save()
         login(request, user)
         # return redirect('home')
+
+        message_user(request.user, receiver="superuser", message="New User")
         return HttpResponse('Terima kasih sudah verifikasi, sekarang anda dapat LOGIN menggunakan akun anda.')
     else:
-        return HttpResponse('Activasi tidak berhasil!')
+        return HttpResponse('Aktivasi tidak berhasil!')
 
 
 def loginPage(request):
@@ -183,7 +204,9 @@ def homePage(request):
 
     pengumuman = Pengumuman.objects.filter(frontpage=True)
 
-    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans, 'pengumuman': pengumuman}
+    _inspirasi = inspirasi()
+
+    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans, 'pengumuman': pengumuman, 'inspirasi': _inspirasi}
     context = {**context, **navmenu}
     
     return render(request, 'edukasi/home.html', context)
@@ -215,6 +238,7 @@ def listmateri(request):
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
+    logthis(request.user, None , None, None, "browse listmateri")
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
@@ -226,6 +250,7 @@ def listplaylist(request):
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
+    logthis(request.user, None , None, None, "browse listplaylist")
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listplaylist.html', context)
@@ -258,7 +283,7 @@ def materi(request, sid):
         data = {'user': request.user, 'materi': sid}
         form = ReviewForm(initial=data)
 
-
+    logthis(request.user, materi=materi, topic=None, soal=None, keterangan="Daftar isi materi")
     context = {'materi': materi, 'starttopic': starttopic,
                'tags': tags, 'topics': topics, 'review': review, 'form': form}
     context = {**context, **navmenu}
@@ -337,12 +362,15 @@ def topic(request, sid):
         if diskusiForm.is_valid():
             pesan = diskusiForm.cleaned_data.get('pesan')
             diskusiForm.save()
+            
+            message_user(request.user, receiver="staff", message="Diskusi baru", url=reverse("topic", args=[sid]))
             return redirect('topic', sid)
     else:
         data = {'user': request.user,
                 'topic': sid, }
         diskusiForm = DiskusiForm(initial=data)
 
+    logthis(request.user, materi=materi, topic=topic_content, soal=None, keterangan="Buka topic")
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
                'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
                'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar, 'tugas': tugas
@@ -656,10 +684,12 @@ def daftarmateri(request, sid):
         if bayar == 0:
             pendaftaran = Pendaftaran.daftar(request.user, sid)
             pendaftaran.save()
+            message_user(request.user,receiver="staff", message="Daftar Materi baru")
             return redirect('materi', sid)
         else:
             pembayaran = Pembayaran.daftar(request.user, sid, byr_rnd)
             pembayaran.save()
+            message_user(request.user, receiver="staff", message="Pembayaran materi", url=reverse("pembayaran"))
             return redirect('home')
 
     context = {'materi': materi, 'price': price, 'discount': discount,
@@ -773,6 +803,9 @@ def periksa(request, sid, topic_asal=None):
         topic = Topic.objects.get(id=request.POST.get("topic_asal"))
         tugas = Tugas.objects.get(id=request.POST.get("tugas"))
         materi = Materi.objects.get(id=request.POST.get("materi"))
+
+        logthis(request.user, materi=materi, topic=topic, soal=soal, keterangan="Menjawab soal")
+        message_user(request.user, "staff", message=str(request.user)+" Menjawab soal")
 
         if soal.tipe == "Betul / Salah":
             if request.POST.get("id_select") == str(soal.benarsalah):

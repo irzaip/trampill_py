@@ -82,7 +82,11 @@
           <button class="btn btn-danger dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ pesan.count }}</button>
           <div class="dropdown-menu" aria-labelledby="navDropdown">
             {% for p in pesan %}
-            <a href="#" class="dropdown-item"><strong>{{ p.sender }}</strong>: {{ p.msg_content }}</a>
+            {% if p.url %}
+            <a class="dropdown-item" href="{{ p.url }}"><strong>{{ p.sender }}</strong>: {{ p.msg_content }}</a>
+            {% else %}
+            <a class="dropdown-item" href="#"><strong>{{ p.sender }}</strong>: {{ p.msg_content }}</a>
+            {% endif %}
             {% endfor %}
             <div class="dropdown-divider"></div>
             <a href="/readall/" class="dropdown-item">Tandai telah semua dibaca</a>
