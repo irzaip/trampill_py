@@ -233,7 +233,7 @@ def dashboard(request):
 
 def listmateri(request):
     navmenu = get_user_menu(request)
-    materis = Materi.objects.filter(playlist=False)
+    materis = Materi.objects.filter()
 
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
@@ -242,6 +242,24 @@ def listmateri(request):
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
+
+def searchmateri(request):
+    ss = request.GET.get("ss")
+    if not ss:
+        ss = ""
+    navmenu = get_user_menu(request)
+    materis = Materi.objects.filter(judul__icontains=str(ss))
+#    materis2 = Materi.objects.filter(deskripsi__icontains=str(ss))
+
+#    materis = materis.append(materis2)
+
+    mFilter = MateriFilter(request.GET, queryset=materis)
+    materis = mFilter.qs
+
+    logthis(request.user, None , None, None, "browse listmateri")
+    context = {'materis': materis, 'mFilter': mFilter}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/searchmateri.html', context)
 
 def listplaylist(request):
     navmenu = get_user_menu(request)

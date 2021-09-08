@@ -1,0 +1,55 @@
+{% extends 'edukasi/main.html' %}
+
+
+{% block content %}
+
+
+ <div class="album py-5 bg-light">
+   <div class="container">
+      <div class="row-md-3 justify-content-center"><h1 class="text-center">Daftar Materi</h1></div>
+
+      <a class="btn btn-primary" data-toggle="collapse" href="#filterCollapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Filter Materi
+      </a>
+      <div class="collapse" id="filterCollapse">
+        <div class="row justify-content-md-center">
+          <form action="" method="get" class="col col-lg">
+            {{ mFilter.form.as_table}}
+            <button type="submit" class="btn btn-primary">FILTER</button>
+          </form>
+        </div>
+      </div>
+
+
+      <div class="row">
+        {% for i in materis %}
+        
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-header">
+            {{ i.kategori }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ i.judul }}</h5>
+            <p class="card-text">{{ i.deskripsi | safe }}</p>
+
+            <a href="{% url 'materi' i.id %}" class="btn btn-primary">Lihat</a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'edit_materi' i.id %}" class="btn btn-warning">EDIT</a>
+            {% endif %}
+            <a class="btn btn-warning"><i class="fas fa-heart"></i></a>
+          </div>
+        </div>
+
+        {% endfor %} 
+      </div>
+
+      <div style="margin-top: 30px;">
+        {% if not materis %}
+          <h3>Hasil pencarian tidak ditemukan.</h3>
+        {% endif %}
+      </div>
+   </div>
+ </div>
+
+      
+{% endblock %}

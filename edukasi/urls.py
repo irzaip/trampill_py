@@ -1,6 +1,7 @@
 from django.urls import path, include, re_path
 from edukasi import views
 from django.contrib.auth import views as auth_views #import this
+from .views import searchmateri
 
 
 from . import views
@@ -79,5 +80,5 @@ urlpatterns = [
     path('api/listkegiatan/', apiviews.listkegiatan_apiview, name='listkegiatan_apiview'),
     path('kegiatan/<str:sid>/', views.view_kegiatan, name='view_kegiatan'),
     path('listkegiatan/', views.list_kegiatan, name='list_kegiatan'),
-    
+    path('search/', views.searchmateri, name='searchmateri'),
 ]

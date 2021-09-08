@@ -21,6 +21,11 @@ class CreateUserForm(UserCreationForm):
         help_texts = {'first_name': "Isi dengan nama depan anda.", 'password1': ""}
 
 
+class UserSettingsForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = [ 'first_name','last_name','username', 'email', 'password1', 'password2']
+
 class ExampleForm(forms.Form):
     favorite_food = forms.CharField(
         label = "What is your favorite food?",
