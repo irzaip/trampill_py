@@ -238,7 +238,9 @@ def listmateri(request):
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
-    logthis(request.user, None , None, None, "browse listmateri")
+    if request.user.is_authenticated:
+        logthis(request.user, None , None, None, "browse listmateri")
+
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listmateri.html', context)
@@ -256,7 +258,9 @@ def searchmateri(request):
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
-    logthis(request.user, None , None, None, "browse listmateri")
+    if request.user.is_authenticated:
+        logthis(request.user, None , None, None, "browse listmateri")
+
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/searchmateri.html', context)
@@ -268,7 +272,9 @@ def listplaylist(request):
     mFilter = MateriFilter(request.GET, queryset=materis)
     materis = mFilter.qs
 
-    logthis(request.user, None , None, None, "browse listplaylist")
+    if request.user.is_authenticated:
+        logthis(request.user, None , None, None, "browse listplaylist")
+
     context = {'materis': materis, 'mFilter': mFilter}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listplaylist.html', context)
@@ -301,7 +307,9 @@ def materi(request, sid):
         data = {'user': request.user, 'materi': sid}
         form = ReviewForm(initial=data)
 
-    logthis(request.user, materi=materi, topic=None, soal=None, keterangan="Daftar isi materi")
+    if request.user.is_authenticated:
+        logthis(request.user, materi=materi, topic=None, soal=None, keterangan="Daftar isi materi")
+
     context = {'materi': materi, 'starttopic': starttopic,
                'tags': tags, 'topics': topics, 'review': review, 'form': form}
     context = {**context, **navmenu}
@@ -388,7 +396,9 @@ def topic(request, sid):
                 'topic': sid, }
         diskusiForm = DiskusiForm(initial=data)
 
-    logthis(request.user, materi=materi, topic=topic_content, soal=None, keterangan="Buka topic")
+    if request.user.is_authenticated:
+        logthis(request.user, materi=materi, topic=topic_content, soal=None, keterangan="Buka topic")
+
     context = {'materi': materi, 'topics': topics, 'topic_content': topic_content, 'sid': sid,
                'next': next, 'prev': prev, 'ytb_video': ytb_video, 'completed': completed, 'diskusi': diskusi,
                'diskusiForm': diskusiForm, 'materi_terdaftar': materi_terdaftar, 'tugas': tugas
@@ -822,7 +832,9 @@ def periksa(request, sid, topic_asal=None):
         tugas = Tugas.objects.get(id=request.POST.get("tugas"))
         materi = Materi.objects.get(id=request.POST.get("materi"))
 
-        logthis(request.user, materi=materi, topic=topic, soal=soal, keterangan="Menjawab soal")
+        if request.user.is_authenticated:
+            logthis(request.user, materi=materi, topic=topic, soal=soal, keterangan="Menjawab soal")
+
         message_user(request.user, "staff", message=str(request.user)+" Menjawab soal")
 
         if soal.tipe == "Betul / Salah":
