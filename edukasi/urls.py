@@ -9,15 +9,15 @@ from . import apiviews
  
 
 urlpatterns = [
-    path('', views.homePage, name="home"),
-    path('register/', views.registerPage, name="register"),
+    path('', views.home_page, name="home"),
+    path('register/', views.register_page, name="register"),
     #path('accounts/', include('django.contrib.auth.urls')),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='edukasi/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="edukasi/password_reset_confirm.html"), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='edukasi/password_reset_complete.html'), name='password_reset_complete'),      
 
-    path('login/', views.loginPage, name='login'),
-    path('logout/', views.logoutPage, name="logout"),
+    path('login/', views.login_page, name='login'),
+    path('logout/', views.logout_page, name="logout"),
     path('listmateri/', views.listmateri, name='listmateri'),
     path('listplaylist/', views.listplaylist, name='listplaylist'),
     path('materi/<str:sid>/', views.materi, name='materi'),

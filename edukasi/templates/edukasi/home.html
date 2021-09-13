@@ -186,6 +186,26 @@
 
 
 
+<div class="container" style="margin-top: 60px;">
+  <div class="row justify-content-end">
+    <a href="{% url 'listmateri' %}" class="text-right">[Lihat semua materi]</a>
+  </div>
+   <h1 style="margin-bottom: 20px;"><center>Unggulan</center></h1>
+  <div class="row justify-content-center">
+    {% for i in featured %}
+    <div class="col-sm-3">
+        <div class="card border-0 h-100 text-center">
+          <img src="/images/{{ i.gambar }}" alt="" width="140" height="140" class="bd-placeholder-img rounded-circle mx-auto" style="margin-top: 10px;">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-center mx-auto" style="margin-top: 10px;">{{ i.judul }}</h5>
+            <p class="card-text text-center">{{ i.pendek | safe }}</p>
+            <a class="btn btn-secondary mt-auto" href="{% url 'materi' i.id %}" role="button">Lihat materi &raquo;</a>
+          </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
 
 
 
@@ -198,7 +218,11 @@
     {% for i in materis %}
     <div class="col-sm-3">
         <div class="card border-0 h-100 text-center">
+          {% if i.gambar %}
           <img src="/images/{{ i.gambar }}" alt="" width="140" height="140" class="bd-placeholder-img rounded-circle mx-auto" style="margin-top: 10px;">
+          {% else %}
+          <img src="/images/baru.png" alt="" width="140" height="140" class="bd-placeholder-img rounded-circle mx-auto" style="margin-top: 10px;">
+          {% endif %}
           <div class="card-body d-flex flex-column">
             <h5 class="card-title text-center mx-auto" style="margin-top: 10px;">{{ i.judul }}</h5>
             <p class="card-text text-center">{{ i.pendek | safe }}</p>

@@ -1,43 +1,41 @@
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.forms import inlineformset_factory
+from django.contrib.auth.forms import UserCreationForm,  PasswordResetForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages as int_messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets, permissions
+from edukasi.serializers import *
+from django.db.models.query_utils import Q
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage, send_mail, BadHeaderError
+from django.template.context_processors import csrf
+from django.contrib.auth.decorators import user_passes_test
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+
+from .youtube import *
 from .models import *
 from .mylib import *
 from .decorators import *
 from .filter import *
 from .forms import *
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.forms import inlineformset_factory
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages as int_messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
-from edukasi.serializers import *
-from django.contrib.auth.forms import PasswordResetForm
-from django.db.models.query_utils import Q
-from django.contrib.auth.tokens import default_token_generator
-from django.urls import reverse
-from .future import *
-
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
 from .tokens import account_activation_token
-from django.core.mail import EmailMessage, send_mail, BadHeaderError
-
-from django.template.context_processors import csrf
+from .future import *
 from crispy_forms.utils import render_crispy_form
-from django.contrib.auth.decorators import user_passes_test
 import random
 import ast
 
-from .youtube import *
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 def message_user(sender, receiver, message, url=None):
     sender=User.objects.get(username=sender)
@@ -101,7 +99,7 @@ def password_reset_request(request):
 	return render(request=request, template_name="edukasi/password_reset.html", context={"password_reset_form":password_reset_form})
 
 # Create your views here.
-def registerPage(request):
+def register_page(request):
     context = dict()
     form = CreateUserForm()
     if request.method == 'POST':
@@ -166,7 +164,7 @@ def activate(request, uidb64, token):
         return HttpResponse('Aktivasi tidak berhasil!')
 
 
-def loginPage(request):
+def login_page(request):
 
     if request.method == "POST":
         username = request.POST.get('username')
@@ -186,27 +184,34 @@ def loginPage(request):
     return render(request, 'edukasi/login.html', context)
 
 
-def logoutPage(request):
+def logout_page(request):
     logout(request)
     return redirect('login')
 
 
-def homePage(request):
+def home_page(request):
     navmenu = get_user_menu(request)
 
     import datetime
     today = datetime.datetime.today()
     kegiatans = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
 
-    materis = Materi.objects.all()[:4]
+    materis = Materi.objects.order_by('-created_at')[:4]
 
-    playlist = Materi.objects.filter(playlist=True)
+    featured = Materi.objects.filter(featured=True)[:4]
+
+    playlist = Materi.objects.order_by('-created_at').filter(playlist=True)
 
     pengumuman = Pengumuman.objects.filter(frontpage=True)
 
     _inspirasi = inspirasi()
 
-    context = {'materis': materis, 'playlist': playlist, 'kegiatans': kegiatans, 'pengumuman': pengumuman, 'inspirasi': _inspirasi}
+    context = {'materis': materis, 
+        'playlist': playlist, 
+        'kegiatans': kegiatans, 
+        'pengumuman': pengumuman, 
+        'inspirasi': _inspirasi,
+        'featured': featured}
     context = {**context, **navmenu}
     
     return render(request, 'edukasi/home.html', context)
@@ -252,7 +257,6 @@ def searchmateri(request):
     navmenu = get_user_menu(request)
     materis = Materi.objects.filter(judul__icontains=str(ss))
 #    materis2 = Materi.objects.filter(deskripsi__icontains=str(ss))
-
 #    materis = materis.append(materis2)
 
     mFilter = MateriFilter(request.GET, queryset=materis)
@@ -988,17 +992,17 @@ def ytb_playlist_confirm(request):
         ytb_playlist_url = request.POST.get('ytb_playlist_url')
 
         try:
-            ppengajar = Pengajar.objects.get(nama=pengajar)
+            pengajar = Pengajar.objects.get(nama=pengajar)
         except:
-            ppengajar = Pengajar.create_pengajar(nama=pengajar, tentang_pengajar=tentang_pengajar)
-            ppengajar.save()
+            pengajar = Pengajar.create_pengajar(nama=pengajar, tentang_pengajar=tentang_pengajar)
+            pengajar.save()
 
         materi = Materi.objects.create(
             judul=judul,
             kode=kode,
             pendek=pendek,
             deskripsi=deskripsi,
-            pengajar=ppengajar,
+            pengajar=pengajar,
             ytb_playlist_url=ytb_playlist_url,
             hidden=True,
             playlist=True,
@@ -1014,7 +1018,6 @@ def ytb_playlist_confirm(request):
 
         return redirect('materi', materi.pk)
 
-    context = {'playlist': playlist}
     context = {**context, **navmenu}
     return render(request, 'edukasi/ytb_playlist_confirm.html', context)
 
@@ -1022,9 +1025,7 @@ def view_kegiatan(request, sid):
     navmenu = get_user_menu(request)
 
     kegiatan = Kegiatan.objects.get(id=sid)
-
     materis = Materi.objects.filter(id=kegiatan.materi.id)
-
 
     context = {'kegiatan': kegiatan, 'materis': materis}
     context = {**context, **navmenu}
@@ -1035,8 +1036,6 @@ def list_kegiatan(request):
     navmenu = get_user_menu(request)
 
     kegiatan = Kegiatan.objects.all()
-
-    
     context = {'kegiatan': kegiatan}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listkegiatan.html', context)
