@@ -3,7 +3,7 @@
 
 <style>
 
-.cards-wrapper {
+.card-deck {
   display: flex;
   justify-content: center;
 }
@@ -18,13 +18,13 @@
   border-radius: 10;
 }
 .carousel-inner {
-  padding: 1em;
+  padding: 2em;
 }
 .carousel-control-prev,
 .carousel-control-next {
   background-color: #b42828;
-  width: 5vh;
-  height: 5vh;
+  width: 7vh;
+  height: 7vh;
   border-radius: 50%;
   top: 50%;
   transform: translateY(-50%);
@@ -61,41 +61,37 @@
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <div class="cards-wrapper">
-
-
+      <div class="card-deck">
         <div class="card">
-        <img src="/images/inspirasi.png" class="card-img-top" alt="...">
-        <div class="card-body">
-          
-          <h5 class="card-title">{{ inspirasi }}</h5>
-          <p class="card-text">{{ pengumuman.all.0.isi | safe }}</p>
-          
+          <img src="/images/inspirasi.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            
+            <h5 class="card-title">{{ inspirasi }}</h5>
+            <p class="card-text">{{ pengumuman.all.0.isi | safe }}</p>
+          </div>
         </div>
-          
-      </div>
-      <div class="card d-none d-md-block">
-        <img src="/images/kegiatan.png" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">{{ kegiatans.all.0.judul_acara }}</h5>
-          <p class="card-text">{{ kegiatans.all.0.deskripsi | safe }}</p>
-          <a href="{% url 'view_kegiatan' kegiatans.all.0.id %}" class="btn btn-primary">Lihat kegiatan</a>
+        <div class="card d-none d-md-block">
+          <img src="/images/kegiatan.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{ kegiatans.all.0.judul_acara }}</h5>
+            <p class="card-text">{{ kegiatans.all.0.deskripsi | safe }}</p>
+            <a href="{% url 'view_kegiatan' kegiatans.all.0.id %}" class="btn btn-primary">Lihat kegiatan</a>
+          </div>
+        </div>
+        <div class="card d-none d-md-block">
+          <img src="/images/kegiatan2.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{ kegiatans.all.1.judul_acara }}</h5>
+            <p class="card-text">{{ kegiatans.all.1.deskripsi | safe }}</p>
+            <a href="{% url 'view_kegiatan' kegiatans.all.1.id %}" class="btn btn-primary">Lihat kegiatan</a>
+          </div>
         </div>
       </div>
-      <div class="card d-none d-md-block">
-        <img src="/images/kegiatan2.png" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">{{ kegiatans.all.1.judul_acara }}</h5>
-          <p class="card-text">{{ kegiatans.all.1.deskripsi | safe }}</p>
-          <a href="{% url 'view_kegiatan' kegiatans.all.1.id %}" class="btn btn-primary">Lihat kegiatan</a>
-        </div>
-      </div>
-    </div>
     </div>
 
 
     <div class="carousel-item">
-      <div class="cards-wrapper">
+      <div class="card-deck">
         {% if kegiatans.all.2 %}  
         <div class="card">
           <img src="/images/kegiatan.png" class="card-img-top" alt="...">
@@ -134,7 +130,7 @@
 
     
     <div class="carousel-item">
-      <div class="cards-wrapper">
+      <div class="card-deck">
 
         {% if pengumuman.all.0 %}
         <div class="card">
