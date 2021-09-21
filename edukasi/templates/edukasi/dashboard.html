@@ -27,15 +27,13 @@
       <a href="{% url 'listmateri' %}">[Lihat semua materi]</a>
     </div>
   
-    <div class="row">
+    <div class="card-columns">
       {% for i in materis %}
-      <div class="col-sm-3">
-          <div class="card border h-100  bg-light">
-            <div class="card-body">
-              <p class="card-title font-weight-bold"><a href="{% url 'materi' i.materi.id %}">{{ i.materi.judul }}</a></p>
-              <p class="card-text" style="font-size: 0.9em;">{{ i.materi.pendek }}</p>
-            </div>
-          </div>
+      <div class="card border h-100  bg-light">
+        <div class="card-body">
+          <p class="card-title font-weight-bold"><a href="{% url 'materi' i.materi.id %}">{{ i.materi.judul }}</a></p>
+          <p class="card-text" style="font-size: 0.9em;">{{ i.materi.pendek }}</p>
+        </div>
       </div>
       {% endfor %}
     </div>

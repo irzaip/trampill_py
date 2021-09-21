@@ -1,42 +1,6 @@
 {% extends 'edukasi/main.html' %}
 {% block content %}
 
-<style>
-
-.card-deck {
-  display: flex;
-  justify-content: center;
-}
-.card img {
-  max-width: 100%;
-  max-height: 100%;
-}
-.card {
-  margin: 0 0.5em;
-  box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
-  border: 1px ;
-  border-radius: 10;
-}
-.carousel-inner {
-  padding: 2em;
-}
-.carousel-control-prev,
-.carousel-control-next {
-  background-color: #b42828;
-  width: 7vh;
-  height: 7vh;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-@media (min-width: 768px) {
-  .card img {
-    height: 6em;
-  }
-}
-
-</style>
-
 
 <section class="jumbotron text-center">
   <div class="container">
@@ -235,35 +199,30 @@
     <a href="{% url 'listplaylist' %}">[Lihat semua playlist]</a>
   </div>
   <center><h2 style="margin-bottom: 20px;">Materi Playlist (Selalu FREE!!)</h2></center>
-    <div class="row">
-      {% for i in playlist %}
-      <div class="col-sm-3">
-          <div class="card border h-100  bg-light">
-            <div class="card-body">
-              <p class="card-title font-weight-bold"><a href="{% url 'materi' i.id %}">{{ i.judul }}</a></p>
-              <p class="card-text" style="font-size: 0.9em;"><strong>{{ i.pengajar.nama }}</strong></p>
-              <p class="card-text" style="font-size: 0.9em;">{{ i.pendek | safe }}</p>
-            </div>
-          </div>
+  <div class="card-columns">
+    {% for i in playlist %}
+    <div class="card border h-100  bg-light">
+      <div class="card-body">
+        <p class="card-title font-weight-bold"><a href="{% url 'materi' i.id %}">{{ i.judul }}</a></p>
+        <p class="card-text" style="font-size: 0.9em;"><strong>{{ i.pengajar.nama }}</strong></p>
+        <p class="card-text" style="font-size: 0.9em;">{{ i.pendek | safe }}</p>
       </div>
-      {% endfor %}
-      <div class="col-sm-3">
-        <div class="card border h-100  bg-light">
-          <div class="card-body">
-            <p class="card-title font-weight-bold"><a href="">Kamu Kreator?</a></p>
-            <p class="card-text" style="font-size: 0.9em;">ingin materi kamu tampil disini? request ke admin! [irzaip at gmail dot com]</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="card border h-100  bg-light">
-          <div class="card-body">
-            <p class="card-title font-weight-bold"><a href="">Keberatan tampil disini?</a></p>
-            <p class="card-text" style="font-size: 0.9em;">request ke admin! untuk menghapus playlist kamu. [irzaip at gmail dot com]</p>
-          </div>
-        </div>
     </div>
-  
+    {% endfor %}
+      
+    <div class="card border h-100  bg-light">
+      <div class="card-body">
+        <p class="card-title font-weight-bold"><a href="">Kamu Kreator?</a></p>
+        <p class="card-text" style="font-size: 0.9em;">ingin materi kamu tampil disini? request ke admin! [irzaip at gmail dot com]</p>
+      </div>
+    </div>
+    <div class="card border h-100  bg-light">
+      <div class="card-body">
+        <p class="card-title font-weight-bold"><a href="">Keberatan tampil disini?</a></p>
+        <p class="card-text" style="font-size: 0.9em;">request ke admin! untuk menghapus playlist kamu. [irzaip at gmail dot com]</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
