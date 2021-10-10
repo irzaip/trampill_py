@@ -1,0 +1,29 @@
+{% extends 'edukasi/main.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+<div class="container-md" style="margin-top: 20px;">
+<h2>Murid {{ lookup_user.username }}({{ lookup_user.first_name}} {{ lookup_user.last_name }}), terdaftar di materi:</h2>
+<section style="margin-left: 20px;">
+{% for key,val in data.items %}
+{% if val %}
+<h4>{{ key }}</h4>
+    {% for i in val %}
+      {% if i in jawaban %}
+        <p style="color: green;">{{ i }}</p>
+        {% else %}
+        <p style="color: red;">{{ i }}</p>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% endfor %}
+
+</section>
+</div>
+
+
+      
+{% endblock %}

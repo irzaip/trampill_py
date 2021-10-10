@@ -1040,3 +1040,36 @@ def list_kegiatan(request):
     context = {**context, **navmenu}
     return render(request, 'edukasi/listkegiatan.html', context)
     
+def list_tugas_user(request, pk):
+    navmenu = get_user_menu(request)
+
+    pendaftaran = Pendaftaran.objects.filter(user=pk)
+    jawaban = Jawaban.objects.filter(user=pk)
+    lookup_user = User.objects.get(id=pk)
+
+    all_jawaban = []
+    for i in jawaban:
+        all_jawaban.append(i.topic)
+    
+
+    data = {}
+    for item in pendaftaran:
+        tugas = Topic.objects.filter(materi_id = item.materi_id, tugas__isnull = False)
+        data[item.materi.judul] = tugas
+
+    import pprint
+    pprint.pprint(jawaban)
+    context = {'data': data, 'jawaban' : all_jawaban , 'lookup_user': lookup_user}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/list_tugas_user.html', context)
+
+def cek_murid(request, pk):
+    navmenu = get_user_menu(request)
+    
+    pendftr = Pendaftaran.objects.filter(materi_id=pk)
+
+    import pprint
+    pprint.pprint(pendftr )
+    context = {'pendftr': pendftr}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/cek_murid.html', context)
