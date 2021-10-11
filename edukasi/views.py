@@ -1057,8 +1057,6 @@ def list_tugas_user(request, pk):
         tugas = Topic.objects.filter(materi_id = item.materi_id, tugas__isnull = False)
         data[item.materi.judul] = tugas
 
-    import pprint
-    pprint.pprint(jawaban)
     context = {'data': data, 'jawaban' : all_jawaban , 'lookup_user': lookup_user}
     context = {**context, **navmenu}
     return render(request, 'edukasi/list_tugas_user.html', context)

@@ -7,21 +7,31 @@
 
 <div class="container-md" style="margin-top: 20px;">
 <h2>Murid {{ lookup_user.username }}({{ lookup_user.first_name}} {{ lookup_user.last_name }}), terdaftar di materi:</h2>
-<section style="margin-left: 20px;">
+
 {% for key,val in data.items %}
 {% if val %}
 <h4>{{ key }}</h4>
-    {% for i in val %}
+<table class="table table-sm table-striped">
+  <tr>
+    <td>Topic</td>
+    <td>Status</td>
+  </tr>
+  {% for i in val %}
+      <tr>
+      <td>
       {% if i in jawaban %}
         <p style="color: green;">{{ i }}</p>
         {% else %}
         <p style="color: red;">{{ i }}</p>
         {% endif %}
+      </td>
+      <td>{% if i in jawaban %}Done{% endif %}</td>  
+      </tr>
     {% endfor %}
+  </table>
 {% endif %}
 {% endfor %}
 
-</section>
 </div>
 
 
