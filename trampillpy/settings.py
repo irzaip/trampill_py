@@ -41,7 +41,7 @@ SECRET_KEY = 'vypic2_mg4@#os$szv0d#kcjfjaaouvllyn!3@=qmhki^#7ux^'
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['neo.trampill.com', '192.168.30.50', '127.0.0.1']
+ALLOWED_HOSTS = ['neo.trampill.com', '192.168.0.201', '127.0.0.1']
 
 USE_THOUSAND_SEPARATOR = True
 
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'rest_framework',
+    'rest_framework_simplejwt',
     'crispy_forms',
     'edukasi',
     'django_filters',
@@ -164,6 +165,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
