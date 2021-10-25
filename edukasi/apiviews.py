@@ -99,7 +99,6 @@ def materi_apiview(request, pk, format=None):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def kegiatan_apiview(request, pk, format=None):
     try:
         queryset = Kegiatan.objects.get(id=pk)
@@ -112,7 +111,6 @@ def kegiatan_apiview(request, pk, format=None):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def listmateri_apiview(request, format=None):
     try:
         queryset = Materi.objects.all()
@@ -125,7 +123,6 @@ def listmateri_apiview(request, format=None):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def listkegiatan_apiview(request, format=None):
     try:
         today = datetime.datetime.today()
