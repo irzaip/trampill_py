@@ -97,18 +97,18 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'groups']
 
 class PendaftaranSerializer(serializers.ModelSerializer):
-    #materi = MateriSerializer(many=False)
-    
+    materi = MateriSerializer(many=False)
+
     class Meta:
         model = Pendaftaran
         fields = ['materi']
-        depth = 1
-
+        
 class FavoritSerializer(serializers.ModelSerializer):
     materi = MateriSerializer(many=False)
+    
     class Meta:
         model = Favorit
-        fields = ['user', 'materi']
+        fields = ['materi']
 
 class PembayaranSerializer(serializers.ModelSerializer):
     class Meta:

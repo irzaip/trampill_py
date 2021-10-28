@@ -32,7 +32,7 @@ import ast
 from .youtube import *
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -86,7 +86,7 @@ def topic_apiview(request, pk, format=None):
     return Response(serial.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def materi_apiview(request, pk, format=None):
     try:
         queryset = Materi.objects.get(id=pk)
@@ -99,6 +99,7 @@ def materi_apiview(request, pk, format=None):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def kegiatan_apiview(request, pk, format=None):
     try:
         queryset = Kegiatan.objects.get(id=pk)
@@ -111,6 +112,7 @@ def kegiatan_apiview(request, pk, format=None):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def listmateri_apiview(request, format=None):
     try:
         queryset = Materi.objects.all()
@@ -118,11 +120,12 @@ def listmateri_apiview(request, format=None):
         return Response({'status': 'Error retrieving'})
 
     serial = MateriSerializer(queryset, many=True, context={'request': request})
-    Logakses.objects.create(user=request.user, keterangan="listmateri", api=True)
+    #Logakses.objects.create(user=request.user, keterangan="listmateri", api=True)
     return Response(serial.data)
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def listkegiatan_apiview(request, format=None):
     try:
         today = datetime.datetime.today()
