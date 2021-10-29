@@ -27,7 +27,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         confirm_pass = self.validated_data['confirm_pass']
         user.is_active = False
         if password != confirm_pass:
-            raise serializers.ValidationError({'password': 'Password must match'})
+            raise serializers.ValidationError({'error': 'Password must match'})
         user.set_password(password)
         user.save()
         group = Group.objects.get(name='customer')

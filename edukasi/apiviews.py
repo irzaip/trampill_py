@@ -240,7 +240,7 @@ def api_register(request):
         data = {}
         if serializer.is_valid():
             user = serializer.save()
-            data['response'] = "Success register, check email please"
+            data['response'] = "Registrasi berhasil, Aktivasi terlebih dahulu, check email anda!"
             data['email'] = user.email
             data['username'] = user.username
 
