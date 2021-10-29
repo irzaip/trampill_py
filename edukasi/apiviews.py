@@ -31,6 +31,7 @@ import random
 import ast
 
 from .youtube import *
+from .future import *
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -265,3 +266,8 @@ def api_register(request):
         return Response(data)
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def inspiring(request):
+    futura = inspirasi()
+    return JsonResponse({'response': futura})

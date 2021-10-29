@@ -84,4 +84,5 @@ urlpatterns = [
     path('list_tugas_user/<int:pk>/', views.list_tugas_user, name='list_tugas_user'),
     path('cek_murid/<int:pk>/', views.cek_murid, name='cek_murid'),
     path('api/register/', apiviews.api_register, name='api_register'),
+    path('api/inspiring', apiviews.inspiring, name='api_inspiring'),
 ]
