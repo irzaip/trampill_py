@@ -15,6 +15,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from edukasi.serializers import *
+from django.http import JsonResponse
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -228,3 +229,39 @@ def soal_apiview(request,pk):
 def view_topic(request,pk):
     Logakses.objects.create(user=request.user, topic=Topic.objects.get(id=pk), keterangan="topicview", api=True)
     return Response({"status": "logged"})
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def api_register(request):
+    if request.method == 'POST':
+        serializer = RegisterSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            user = serializer.save()
+            data['response'] = "Success register, check email please"
+            data['email'] = user.email
+            data['username'] = user.username
+
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your TRAMPILL account.'
+            message = render_to_string('edukasi/acc_active_email.html', {
+                'user': user.username,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = user.email
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            #context['uidb64'] = urlsafe_base64_encode(force_bytes(user.pk))
+            #context['token'] = account_activation_token.make_token(user)
+
+        else:
+            data = serializer.errors
+        return Response(data)
+
+

@@ -21,7 +21,10 @@ from django.contrib.auth.decorators import user_passes_test
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from . import forms, serializers
 
 from .youtube import *
 from .models import *
@@ -121,7 +124,7 @@ def register_page(request):
             # )
 
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activate your TRAMPILL account.'
             message = render_to_string('edukasi/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -1071,3 +1074,5 @@ def cek_murid(request, pk):
     context = {'pendftr': pendftr}
     context = {**context, **navmenu}
     return render(request, 'edukasi/cek_murid.html', context)
+
+

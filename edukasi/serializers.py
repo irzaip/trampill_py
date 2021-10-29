@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+from django.db.models.fields import EmailField
 from rest_framework import serializers
 from .models import *
+
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -10,16 +14,28 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 # Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
+    confirm_pass = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'confirm_pass')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
+    def save(self):
+        user = User(username=self.validated_data['username'],email= self.validated_data['email'])
+        password = self.validated_data['password']
+        confirm_pass = self.validated_data['confirm_pass']
         user.is_active = False
+        if password != confirm_pass:
+            raise serializers.ValidationError({'password': 'Password must match'})
+        user.set_password(password)
         user.save()
+        group = Group.objects.get(name='customer')
+        user.groups.add(group)
         return user
+
+
+
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -155,3 +171,4 @@ class SoalSerializer(serializers.ModelSerializer):
           'jawaban_8',
         ]
         depth = 1
+
