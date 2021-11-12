@@ -88,7 +88,7 @@ def topic_apiview(request, pk, format=None):
     return Response(serial.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def listtopic_apiview(request, pk, format=None):
 
     try:
