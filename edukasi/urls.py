@@ -65,6 +65,7 @@ urlpatterns = [
     path('ytb_playlist_confirm/', views.ytb_playlist_confirm, name='ytb_playlist_confirm'),
     path('example_view/', apiviews.example_view, name='example_view'),
     path('api/topic/<int:pk>/', apiviews.topic_apiview, name='topic_apiview'),
+    path('api/listtopic/<int:pk>/', apiviews.listtopic_apiview, name='listtopic_apiview'),
     path('api/materi/<int:pk>/', apiviews.materi_apiview, name='materi_apiview'),
     path('api/listmateri/', apiviews.listmateri_apiview, name='listmateri_apiview'),
     path('api/message/', apiviews.message_apiview, name='message_apiview'),
@@ -85,4 +86,5 @@ urlpatterns = [
     path('cek_murid/<int:pk>/', views.cek_murid, name='cek_murid'),
     path('api/register/', apiviews.api_register, name='api_register'),
     path('api/inspiring', apiviews.inspiring, name='api_inspiring'),
+    path('pembayaran/', views.pembayaran, name='pembayaran'),
 ]

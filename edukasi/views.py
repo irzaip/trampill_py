@@ -724,7 +724,8 @@ def daftarmateri(request, sid):
         else:
             pembayaran = Pembayaran.daftar(request.user, sid, byr_rnd)
             pembayaran.save()
-            message_user(request.user, receiver="staff", message="Pembayaran materi", url=reverse("pembayaran"))
+            message_user(request.user, receiver="staff", message="Pembayaran materi", url=reverse("listpembayaran"))
+            message_user(sender="admin", receiver=request.user, message="Menunggu pembayaran materi", url=reverse("pembayaran"))
             return redirect('home')
 
     context = {'materi': materi, 'price': price, 'discount': discount,
@@ -757,6 +758,16 @@ def listpembayaran(request):
     context = {'listpembayaran': listpembayaran}
     context = {**context, **navmenu}
     return render(request, 'edukasi/listpembayaran.html', context)
+
+@login_required(login_url='login')
+def pembayaran(request):
+    navmenu = get_user_menu(request)
+
+    pembayaran = Pembayaran.objects.filter(user=request.user)
+
+    context = {'pembayaran': pembayaran}
+    context = {**context, **navmenu}
+    return render(request, 'edukasi/pembayaran.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def setujupembayaran(request, sid):

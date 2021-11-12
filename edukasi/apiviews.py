@@ -88,6 +88,18 @@ def topic_apiview(request, pk, format=None):
     return Response(serial.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def listtopic_apiview(request, pk, format=None):
+
+    try:
+        queryset = Topic.objects.filter(materi=pk).order_by('no_urut')
+    except:
+        return Response({'status': 'Data not exist'})
+
+    serial = ListTopicSerializer(queryset, many=True)
+    return Response(serial.data)
+
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def materi_apiview(request, pk, format=None):
     try:

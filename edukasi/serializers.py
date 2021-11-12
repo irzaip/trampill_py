@@ -100,6 +100,11 @@ class TopicSerializer(serializers.ModelSerializer):
         model = Topic
         fields = ['materi', 'no_urut', 'judul', 'jenis', 'link', 'isi_tambahan', 'tugas']
 
+class ListTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ['materi', 'no_urut', 'judul', 'jenis']
+
 class MessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = serializers.ReadOnlyField(source='sender.username')
     receiver = serializers.ReadOnlyField(source='receiver.username')
