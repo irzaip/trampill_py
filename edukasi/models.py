@@ -7,6 +7,16 @@ from ckeditor.fields import RichTextField
 def random_char(y):
        return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
+class AkunBank(models.Model):
+    nama_rekening = models.CharField(max_length=200, null=True, blank=True)
+    nama_bank = models.CharField(max_length=200, null=True, blank=True)
+    nama_cabang = models.CharField(max_length=200, null=True, blank=True)
+    bank_code = models.CharField(max_length=200)
+
+
+class Kategori(models.Model):
+    nama_kategori = models.CharField(max_length=200, null=True, blank=True)
+    
 # Create your models here.
 class Pengajar(models.Model):
     nama = models.CharField(max_length=200)
