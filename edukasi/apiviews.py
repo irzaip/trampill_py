@@ -243,6 +243,20 @@ def view_topic(request,pk):
     Logakses.objects.create(user=request.user, topic=Topic.objects.get(id=pk), keterangan="topicview", api=True)
     return Response({"status": "logged"})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def buatfavorit(request, sid):
+    user = User.objects.get(username=request.user)
+    materi = Materi.objects.get(id=sid)
+    check_fav = Favorit.objects.filter(user=user, materi=materi)
+
+    if not check_fav:
+        favorit = Favorit(user=user, materi=materi)
+        favorit.save()
+    else:
+        check_fav.delete()
+
+    return Response({"status": "berhasil"})
 
 
 @api_view(['POST'])
