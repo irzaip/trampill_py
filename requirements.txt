@@ -13,3 +13,4 @@ PyYAML==5.4.1
 django-environ==0.4.5
 pyJWT==2.1.0
 djangorestframework-simplejwt==4.8.0
+django-pwa==1.0.10
