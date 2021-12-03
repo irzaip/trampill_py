@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import string, random
 from ckeditor.fields import RichTextField
-
+from datetime import datetime
 
 def random_char(y):
        return ''.join(random.choice(string.ascii_letters) for x in range(y))
@@ -38,6 +38,9 @@ class UserExt(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     phone = models.CharField(max_length=200)
     kota = models.CharField(max_length=200)
+    kupon_account = models.CharField(max_length=200, default="")
+    last_balance = models.DecimalField(max_digits=19, decimal_places=6, default=0)
+    last_balance_created = models.DateTimeField(blank=True, default=datetime.now)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
  
     def __str__(self):
@@ -81,6 +84,7 @@ class Materi(models.Model):
     frontpage = models.BooleanField(default=False)
     playlist = models.BooleanField(default=False)
     ytb_playlist_url = models.CharField(max_length=300, null=True, blank=True)
+    password = models.CharField(max_length=20, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

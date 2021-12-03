@@ -1,3 +1,4 @@
+from rest_framework import response
 from .models import *
 from .mylib import *
 from .decorators import *
@@ -27,6 +28,9 @@ from django.core.mail import EmailMessage
 from django.template.context_processors import csrf
 from crispy_forms.utils import render_crispy_form
 from django.contrib.auth.decorators import user_passes_test
+from django.utils.timezone import make_aware
+from django.conf import settings
+
 import random
 import ast
 
@@ -34,14 +38,15 @@ from .youtube import *
 from .future import *
 
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import generics, permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from .serializers import *
-
-
+import json
+from django.utils import timezone
+timezone.now
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -142,8 +147,12 @@ def listmateri_apiview(request, format=None):
 @permission_classes([AllowAny])
 def listkegiatan_apiview(request, format=None):
     try:
-        today = datetime.datetime.today()
-        queryset = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
+        today = datetime.today()
+        print("HELLO")
+        
+        #queryset = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
+        queryset = Kegiatan.objects.all()
+        
     except:
         return Response({'status': 'Error retrieving'})
 

@@ -46,7 +46,8 @@ class MateriSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(many=True, read_only=True,slug_field='name')
     pengajar = serializers.ReadOnlyField(source='pengajar.nama')
     tentang_pengajar = serializers.ReadOnlyField(source='pengajar.tentang_pengajar')
-    
+    password = serializers.SerializerMethodField()
+
     class Meta:
         model = Materi
         fields = [
@@ -68,8 +69,11 @@ class MateriSerializer(serializers.ModelSerializer):
             'featured',
             'frontpage',
             'playlist',
+            'password'
         ]
 
+    def get_password(self, instance):
+        return (True if instance.password else False)
 
 class KegiatanSerializer(serializers.ModelSerializer):
     pengajar = serializers.ReadOnlyField(source='pengajar.nama')

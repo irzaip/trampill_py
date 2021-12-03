@@ -68,9 +68,27 @@
         </div>
         {% endif %}
 
+        {% if messages %}
+        <card class="card bg-danger text-light" style="margin-top: 20px;">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
       </div>
         <form action="" method="post" style="margin-top:20px">
           {% csrf_token %}
+            {% if materi.password != "" %}
+            <div class="card bg-warning" style="margin-top: 20px;">
+              <div class="card-body">
+                ISI PASSWORD UNTUK DAFTAR
+                <input type="text" id="password" name="password">
+              </div>
+            </div>
+            {% endif %}
+          </br>
           <button class="btn btn-primary" type="submit">DAFTAR MATERI</button>
         </form>
     </div>

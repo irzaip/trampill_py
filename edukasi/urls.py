@@ -6,7 +6,7 @@ from .views import searchmateri
 
 from . import views
 from . import apiviews
- 
+from . import blockchain
 
 urlpatterns = [
     path('', views.home_page, name="home"),
@@ -88,4 +88,7 @@ urlpatterns = [
     path('api/register/', apiviews.api_register, name='api_register'),
     path('api/inspiring', apiviews.inspiring, name='api_inspiring'),
     path('pembayaran/', views.pembayaran, name='pembayaran'),
+    path('api/reconnect_server', blockchain.reconnect_server, name='reconnect_server'),
+    path('api/get_balance', blockchain.get_balance, name="get_balance"),
+    path('api/get_bytxid', blockchain.get_bytxid, name="get_bytxid"),
 ]

@@ -716,11 +716,16 @@ def daftarmateri(request, sid):
     byr_rnd = bayar + rndm
 
     if request.method == "POST":
-        if bayar == 0:
+        password = request.POST.get('password')
+
+        if (bayar == 0 and password.lower() == materi.password.lower()):
             pendaftaran = Pendaftaran.daftar(request.user, sid)
             pendaftaran.save()
             message_user(request.user,receiver="staff", message="Daftar Materi baru")
             return redirect('materi', sid)
+        elif (password.lower() != materi.password.lower()):
+            int_messages.error(request, 'Password salah')
+            return redirect('daftarmateri', sid)
         else:
             pembayaran = Pembayaran.daftar(request.user, sid, byr_rnd)
             pembayaran.save()
