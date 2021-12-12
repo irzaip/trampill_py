@@ -93,4 +93,5 @@ urlpatterns = [
     path('api/get_bytxid', blockchain.get_bytxid, name="get_bytxid"),
     path('api/', apiviews.apiview, name='apiview'),
     path('api/userprofile/', apiviews.userprofile, name='userprofile'),
+    path('api/hapuspendaftaran/<int:pk>/', apiviews.hapuspendaftaran, name="hapuspendaftaran"),
 ]

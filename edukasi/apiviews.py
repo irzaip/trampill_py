@@ -202,7 +202,6 @@ trampill.com, semua informasi umum materi terdapat pada json ini.
 def listkegiatan_apiview(request, format=None):
     try:
         today = datetime.today()
-        print("HELLO")
         
         #queryset = Kegiatan.objects.filter(tanggal_mulai__lt=today, tanggal_selesai__gt=today)
         queryset = Kegiatan.objects.all()
@@ -250,6 +249,20 @@ def pendaftaran_apiview(request):
     
     serial = PendaftaranSerializer(queryset, many=True)
     return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def hapuspendaftaran(request, pk):
+    try:
+        queryset = Pendaftaran.objects.filter(user=request.user, materi=pk)
+        print(queryset)
+        queryset.delete()
+        return Response({"status" : "Materi berhasil dihapus"})
+    except:
+        return Response({"status" : "Gagal menghapus materi"})
+
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
