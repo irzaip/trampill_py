@@ -91,4 +91,6 @@ urlpatterns = [
     path('api/reconnect_server', blockchain.reconnect_server, name='reconnect_server'),
     path('api/get_balance', blockchain.get_balance, name="get_balance"),
     path('api/get_bytxid', blockchain.get_bytxid, name="get_bytxid"),
+    path('api/', apiviews.apiview, name='apiview'),
+    path('api/userprofile/', apiviews.userprofile, name='userprofile'),
 ]

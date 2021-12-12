@@ -121,6 +121,36 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'groups']
 
+
+
+class UserExtSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserExt
+        fields = [
+             'user',
+             'phone',
+             'kota',
+             'kupon_account',
+             'last_balance',
+             'last_balance_created',
+             'date_created',
+        ]
+
+class UserProfilSerializer(serializers.ModelSerializer):
+    #userext = UserExtSerializer(many=False)
+    phone = serializers.ReadOnlyField(source='userext.phone')
+    kota = serializers.ReadOnlyField(source='userext.kota')
+    kupon_account = serializers.ReadOnlyField(source='userext.kupon_account')
+    last_balance = serializers.ReadOnlyField(source='userext.last_balance_created')
+    date_created = serializers.ReadOnlyField(source='userext.date_created')
+
+    class Meta:
+        model = User
+        fields = '__all__'
+        #depth = 1
+
+
+
 class PendaftaranSerializer(serializers.ModelSerializer):
     materi = MateriSerializer(many=False)
 
@@ -136,10 +166,27 @@ class FavoritSerializer(serializers.ModelSerializer):
         fields = ['materi']
 
 class PembayaranSerializer(serializers.ModelSerializer):
+    materi = MateriSerializer(many=False)
+    user = UserDetailSerializer(many=False)
+
     class Meta:
         model = Pembayaran
-        fields = ['no_order', 'harga','materi', 'status']
+        fields = [
+            'id',
+            'harga',
+            'date_created',
+            'no_order',
+            'status',                
+            'materi',
+            'user',
+            ]
+
+
         depth = 1
+
+    #def get_password(self, instance):
+    #    return (True if instance.password else False)
+
 
 class TugasSerializer(serializers.ModelSerializer):
     class Meta:

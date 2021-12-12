@@ -17,6 +17,10 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from edukasi.serializers import *
 from django.http import JsonResponse
+from django.urls import reverse
+import pprint
+from django.http import HttpResponse
+
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -45,6 +49,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from .serializers import *
 import json
+from .views import message_user
 from django.utils import timezone
 timezone.now
 
@@ -66,6 +71,37 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def apiview(request, format=None):
+    """
+# DAFTAR API di TRAMPILL.com
+- [Mengambil daftar materi /api/listmateri](/api/listmateri)
+- [Mengambil daftar kegiatan /api/listkegiatan](/api/listkegiatan)
+- [Mengambil detail materi /api/materi/(materi_id)](/api/materi/1)
+- [Mengambil topik-topik dari materi. -PUBLIK /api/listtopic/(materi_id)](/api/listtopic/1)
+- [Mengambil topik-topik dari materi.. /api/topic/(materi_id)](/api/topic/1)
+- [Mengambil nama user by id /api/user/(user_id)](/api/user/1)
+- [Mengambil message untuk user logged in /api/message](/api/message/)
+- [Mengambil daftar materi apa saja yang terdaftar /api/pendaftaran](/api/pendaftaran/)
+- [Mendaftar materi berdasarkan idnya /api/mendaftar/(materi_id)](/api/mendaftar/1)
+- [Mengambil daftar materi yang di beri tanda favorit /api/favorit/](/api/favorit/)
+- [Membuat sebuah materi menjadi favorit /api/buatfavorit/(materi_id)](/api/buatfavorit/1)
+- [Melihat seluruh daftar pembayaran /api/pembayaran/](/api/pembayaran)
+- [Melihat tugas /api/tugas/(tugas_id)](/api/tugas/1)
+- [Melihat soal berdasarkan id /api/soal/(soal_id)](/api/soal/1)
+- [Mencatat user apabila sudah melihat sebuah topik_id /api/view_topic/(topic_id)](/api/view_topic/2)
+- [Melihat kegiatan berdasarkan id-nya /api/kegiatan/(kegiatan_id)](/api/kegiatan/1)
+- [Mendaftar sebagai user baru /api/register](/api/register/)
+- [Mengambil quote of the day /api/inspiring](/api/inspiring)
+- [Koneksi ulang blockchain /api/reconnect_server](/api/reconnect_server)
+- [Mengambil data jumlah Voucher /api/get_balance](/api/get_balance)
+- [Mengambil data transaksi voucher berdasarkan id /api/get_bytxid](/api/get_bytxid)
+- [Mendapatkan token JWt setelah login /api/token](/api/token)
+- [Refresh token JWT setelah 12 Jam /api/token/refresh](/api/token/refresh)
+- [Mengambil userprofile yang sedang login /api/userprofile/](/api/userprofile/)
+    """
+    return Response("done")
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -133,6 +169,24 @@ def kegiatan_apiview(request, pk, format=None):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def listmateri_apiview(request, format=None):
+    """
+type: GET  
+permission: AllowAny  
+
+Api ini untuk mengambil Seluruh Listing Materi yang ada di  
+trampill.com, semua informasi umum materi terdapat pada json ini.
+
+### settingan penting
+- harga : Harga yang harus dibayar untuk mendaftar materi  
+- discount : jumlah discount yang berlaku (dalam satuan %)  
+- hidden : tidak ditampilkan di halaman pertama
+- featured : masuk ke rekomendasi atau unggulan.
+- playlist : materi yang terkoneksi dengan playlist youtube / yg lain.
+- password : materi yang memerlukan password untuk mendaftar.
+- pendek : adalah deskripsi dalam format yang lebih pendek.
+- deskripsi : adalah penjelasan umum tentang materi.
+
+    """
     try:
         queryset = Materi.objects.all()
     except:
@@ -166,6 +220,17 @@ def message_apiview(request, format=None):
     queryset = Message.objects.filter(receiver=request.user, readed=False)
     serial = MessageSerializer(queryset, many=True, context={'request': request})
     return Response(serial.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def userprofile(request, format=None):
+    try:
+        queryset = User.objects.get(username=request.user)
+        serial = UserProfilSerializer(queryset, many=False, context={'request': request})
+        return Response(serial.data)
+    except:
+        return Response({'status': 'Error get user profile'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -203,28 +268,53 @@ def pembayaran_apiview(request):
     return Response(serial.data)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mendaftar_apiview(request, pk):
+
     check = Pendaftaran.objects.filter(user=request.user, materi=pk)
     if not check:
         try:
             checkmateri = Materi.objects.get(id=pk)
+            price = checkmateri.harga
+            discount = checkmateri.discount
+            bayar = (price * (100 - discount)) / 100
+            rndm = random.randint(0, 99)
+            byr_rnd = bayar + rndm
         except:
             return Response({'status': 'Materi tidak ditemukan'})        
 
-        if (int(checkmateri.harga) - (int(checkmateri.harga) * int(checkmateri.discount) / 100) > 0):
-            return Response({'status': 'Harus melakukan pembayaran terlebih dahulu'})
-        else:
+        # if (int(checkmateri.harga) - (int(checkmateri.harga) * int(checkmateri.discount) / 100) > 0):
+        #     return Response({'status': 'Harus melakukan pembayaran terlebih dahulu'})
+        # else:
+        #     daftar = Pendaftaran.objects.create(materi=checkmateri, user=request.user)
 
-            daftar = Pendaftaran.objects.create(materi=checkmateri, user=request.user)
-            
+        if request.method == "POST":
+            pprint.pprint(request.POST.get('password'))
+            password = request.POST.get('password')
+            if not password:
+                password = ""
+                print(password.lower())
+                print(checkmateri.password.lower())
+            if (bayar == 0 and password.lower() == checkmateri.password.lower()):
+                pendaftaran = Pendaftaran.daftar(request.user, pk)
+                pendaftaran.save()
+                message_user(request.user,receiver="staff", message="Daftar Materi baru")
+                print("sukses mendaftar")
+                return Response({"status": "Sukses, Materi telah di daftarkan"})
+            elif (password.lower() != checkmateri.password.lower()):
+                #int_messages.error(request, 'Password salah')
+                print("mendaftar gagal")
+                return Response({"status":"Mendaftarkan Gagal, password salah"})
+            else:
+                pembayaran = Pembayaran.daftar(request.user, pk, byr_rnd)
+                pembayaran.save()
+                message_user(request.user, receiver="staff", message="Pembayaran materi", url=reverse("listpembayaran"))
+                message_user(sender="admin", receiver=request.user, message="Menunggu pembayaran materi", url=reverse("pembayaran"))
+                Logakses.objects.create(user=request.user, materi=Materi.objects.get(id=pk), keterangan="mendaftar", api=True)
+                print("mendaftar pending")
+                return Response({"status" : "Pendaftaran diterima, untuk Akses silahkan melakukan pembayaran sesuai yang ada di menu PEMBAYARAN."})
 
-    queryset = Pendaftaran.objects.filter(user=request.user)
-    
-    serial = PendaftaranSerializer(queryset, many=True)
-    Logakses.objects.create(user=request.user, materi=Materi.objects.get(id=pk), keterangan="mendaftar", api=True)
-    return Response({'status': 'Berhasil / Telah di daftarkan'})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -256,7 +346,10 @@ def view_topic(request,pk):
 @permission_classes([IsAuthenticated])
 def buatfavorit(request, sid):
     user = User.objects.get(username=request.user)
-    materi = Materi.objects.get(id=sid)
+    try:
+        materi = Materi.objects.get(id=sid)
+    except:
+        return Response({"status":"Gagal, materi salah"})
     check_fav = Favorit.objects.filter(user=user, materi=materi)
 
     if not check_fav:
