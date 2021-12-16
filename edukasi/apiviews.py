@@ -357,10 +357,10 @@ def view_topic(request,pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def buatfavorit(request, sid):
+def buatfavorit(request, pk):
     user = User.objects.get(username=request.user)
     try:
-        materi = Materi.objects.get(id=sid)
+        materi = Materi.objects.get(id=pk)
     except:
         return Response({"status":"Gagal, materi salah"})
     check_fav = Favorit.objects.filter(user=user, materi=materi)
